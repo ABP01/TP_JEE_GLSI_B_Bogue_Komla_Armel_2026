@@ -13,14 +13,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.ega.egabank.config.SecurityConfig;
 import com.ega.egabank.dto.request.AccountRequest;
 import com.ega.egabank.dto.response.AccountResponse;
 import com.ega.egabank.dto.response.PageResponse;
@@ -34,8 +33,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Tests d'intégration pour AccountController
  */
-@WebMvcTest(AccountController.class)
-@Import(SecurityConfig.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 @DisplayName("Tests du contrôleur Account")
 class AccountControllerTest {
 
@@ -49,12 +48,6 @@ class AccountControllerTest {
     private JwtTokenProvider jwtTokenProvider;
 
     @MockBean
-    private com.ega.egabank.security.JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @MockBean
-    private com.ega.egabank.security.JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
-    @MockBean
     private org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
 
     private ObjectMapper objectMapper;
@@ -65,24 +58,6 @@ class AccountControllerTest {
     @BeforeEach
     void setUp() throws Exception {
         objectMapper = new ObjectMapper();
-
-        doAnswer(invocation -> {
-            jakarta.servlet.http.HttpServletRequest req = (jakarta.servlet.http.HttpServletRequest) invocation.getArgument(0);
-            jakarta.servlet.http.HttpServletResponse resp = (jakarta.servlet.http.HttpServletResponse) invocation.getArgument(1);
-            jakarta.servlet.FilterChain chain = (jakarta.servlet.FilterChain) invocation.getArgument(2);
-            if (org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication() != null
-                    && org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-                chain.doFilter(req, resp);
-                return null;
-            }
-            String auth = req.getHeader("Authorization");
-            if (auth == null || auth.isBlank()) {
-                resp.setStatus(401);
-                return null;
-            }
-            chain.doFilter(req, resp);
-            return null;
-        }).when(jwtAuthenticationFilter).doFilter(any(), any(), any());
 
         accountRequest = AccountRequest.builder()
                 .typeCompte(TypeCompte.COURANT)

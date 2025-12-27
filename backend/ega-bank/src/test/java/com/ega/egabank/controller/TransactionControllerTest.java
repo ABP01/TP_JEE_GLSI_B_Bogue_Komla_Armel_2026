@@ -14,14 +14,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.ega.egabank.config.SecurityConfig;
 import com.ega.egabank.dto.request.OperationRequest;
 import com.ega.egabank.dto.request.TransferRequest;
 import com.ega.egabank.dto.response.TransactionResponse;
@@ -36,8 +35,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Tests d'intégration pour TransactionController
  */
-@WebMvcTest(TransactionController.class)
-@Import(SecurityConfig.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 @DisplayName("Tests du contrôleur Transaction")
 class TransactionControllerTest {
 
@@ -50,14 +49,8 @@ class TransactionControllerTest {
     @MockBean
     private JwtTokenProvider jwtTokenProvider;
 
-        @MockBean
-        private com.ega.egabank.security.JwtAuthenticationFilter jwtAuthenticationFilter;
-
-        @MockBean
-        private com.ega.egabank.security.JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
-        @MockBean
-        private org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
+    @MockBean
+    private org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
 
     private ObjectMapper objectMapper;
     private OperationRequest operationRequest;
@@ -70,24 +63,6 @@ class TransactionControllerTest {
         @BeforeEach
         void setUp() throws Exception {
         objectMapper = new ObjectMapper();
-
-                doAnswer(invocation -> {
-                        jakarta.servlet.http.HttpServletRequest req = (jakarta.servlet.http.HttpServletRequest) invocation.getArgument(0);
-                        jakarta.servlet.http.HttpServletResponse resp = (jakarta.servlet.http.HttpServletResponse) invocation.getArgument(1);
-                        jakarta.servlet.FilterChain chain = (jakarta.servlet.FilterChain) invocation.getArgument(2);
-                                                if (org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication() != null
-                                                                && org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-                                                        chain.doFilter(req, resp);
-                                                        return null;
-                                                }
-                                                String auth = req.getHeader("Authorization");
-                                                if (auth == null || auth.isBlank()) {
-                                                        resp.setStatus(401);
-                                                        return null;
-                                                }
-                                                chain.doFilter(req, resp);
-                        return null;
-                }).when(jwtAuthenticationFilter).doFilter(any(), any(), any());
 
         operationRequest = OperationRequest.builder()
                 .montant(new BigDecimal("200.00"))

@@ -91,6 +91,9 @@ class RepositoryIntegrationTest {
                 .proprietaire(client1)
                 .build();
 
+        client1.getComptes().add(account1);
+        client1.getComptes().add(account2);
+
         entityManager.persist(account1);
         entityManager.persist(account2);
         entityManager.flush();
@@ -251,7 +254,9 @@ class RepositoryIntegrationTest {
             assertThat(accountRepository.findByProprietaireId(clientId)).hasSize(2);
 
             // Act
-            clientRepository.deleteById(clientId);
+            Optional<Client> client = clientRepository.findByIdWithAccounts(clientId);
+            assertThat(client).isPresent();
+            clientRepository.delete(client.get());
             entityManager.flush();
 
             // Assert
