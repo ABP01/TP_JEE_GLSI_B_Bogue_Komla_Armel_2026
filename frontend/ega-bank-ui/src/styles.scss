@@ -1,0 +1,38 @@
+/**======================================================================
+=========================================================================
+Template Name: MAntis Angular - Angular Admin Template
+Author: codedThemes
+Support: https://codedthemes.support-hub.io/
+File: style.css
+=========================================================================
+=================================================================================== */
+
+// main framework
+@use 'bootstrap/functions';
+@use 'bootstrap/variables';
+@use 'bootstrap/variables-dark';
+
+@use 'scss/settings/color-variables';
+@use 'scss/settings/theme-variables';
+@use 'scss/settings/bootstrap-variables';
+
+// bootstrap import
+@use 'scss/bootstrap/bootstrap';
+
+@use 'bootstrap/utilities';
+@use 'bootstrap/utilities/api';
+
+// main framework
+@use 'scss/themes/generic';
+@use 'scss/themes/general';
+
+@use 'scss/themes/components/components';
+
+// theme
+@use 'scss/themes/layouts/menu/sidebar';
+@use 'scss/themes/layouts/navbar/navbar';
+@use 'scss/themes/layouts/pc-common';
+@use 'scss/themes/layouts/breadcrumb/breadcrumb';
+@use 'scss/themes/layouts/footer/footer';
+
+@use 'scss/themes/preset-style';

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from './core/guards/auth.guard';
+import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 
 export const routes: Routes = [
     {
@@ -7,6 +8,7 @@ export const routes: Routes = [
         redirectTo: 'dashboard',
         pathMatch: 'full'
     },
+    // Public routes (login, register)
     {
         path: 'login',
         loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent),
@@ -17,35 +19,42 @@ export const routes: Routes = [
         loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent),
         canActivate: [guestGuard]
     },
+    // Protected routes with MainLayout
     {
-        path: 'dashboard',
-        loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
-        canActivate: [authGuard]
+        path: '',
+        component: MainLayoutComponent,
+        canActivate: [authGuard],
+        children: [
+            {
+                path: 'dashboard',
+                loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
+            },
+            {
+                path: 'clients',
+                loadComponent: () => import('./features/clients/client-list/client-list.component').then(m => m.ClientListComponent)
+            },
+            {
+                path: 'clients/:id',
+                loadComponent: () => import('./features/clients/client-detail/client-detail.component').then(m => m.ClientDetailComponent)
+            },
+            {
+                path: 'accounts',
+                loadComponent: () => import('./features/accounts/account-list/account-list.component').then(m => m.AccountListComponent)
+            },
+            {
+                path: 'accounts/:numero',
+                loadComponent: () => import('./features/accounts/account-detail/account-detail.component').then(m => m.AccountDetailComponent)
+            },
+            {
+                path: 'transactions',
+                loadComponent: () => import('./features/transactions/transaction-list/transaction-list.component').then(m => m.TransactionListComponent)
+            }
+        ]
     },
+    // Connection test (public for debugging)
     {
-        path: 'clients',
-        loadComponent: () => import('./features/clients/client-list/client-list.component').then(m => m.ClientListComponent),
-        canActivate: [authGuard]
-    },
-    {
-        path: 'clients/:id',
-        loadComponent: () => import('./features/clients/client-detail/client-detail.component').then(m => m.ClientDetailComponent),
-        canActivate: [authGuard]
-    },
-    {
-        path: 'accounts',
-        loadComponent: () => import('./features/accounts/account-list/account-list.component').then(m => m.AccountListComponent),
-        canActivate: [authGuard]
-    },
-    {
-        path: 'accounts/:numero',
-        loadComponent: () => import('./features/accounts/account-detail/account-detail.component').then(m => m.AccountDetailComponent),
-        canActivate: [authGuard]
-    },
-    {
-        path: 'transactions',
-        loadComponent: () => import('./features/transactions/transaction-list/transaction-list.component').then(m => m.TransactionListComponent),
-        canActivate: [authGuard]
+        path: 'connection-test',
+        loadComponent: () => import('./features/connection-test/connection-test.component').then(m => m.ConnectionTestComponent)
     },
     {
         path: '**',

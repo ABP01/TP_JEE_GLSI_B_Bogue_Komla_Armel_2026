@@ -15,7 +15,7 @@ export interface AuthResponse {
     accessToken: string;
     refreshToken: string;
     tokenType: string;
-    expiresIn: number;
+    expiresIn?: number;
     username: string;
     email: string;
     role: string;
