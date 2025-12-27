@@ -198,7 +198,7 @@ export class TransactionListComponent implements OnInit {
     this.transferForm = this.fb.group({
       compteSource: ['', Validators.required],
       compteDestination: ['', Validators.required],
-      montant: ['', [Validators.required, Validators.min(1)]],
+      montant: ['', [Validators.required, Validators.min(0.01)]],
       description: ['']
     });
 

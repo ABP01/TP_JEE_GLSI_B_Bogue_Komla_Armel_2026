@@ -178,14 +178,14 @@ export class ClientListComponent implements OnInit {
 
     constructor(private clientService: ClientService, private fb: FormBuilder) {
         this.form = this.fb.group({
-            nom: ['', Validators.required],
-            prenom: ['', Validators.required],
-            dateNaissance: ['', Validators.required],
-            sexe: ['MASCULIN', Validators.required],
-            telephone: [''],
-            courriel: ['', Validators.email],
-            adresse: [''],
-            nationalite: ['']
+          nom: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+          prenom: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+          dateNaissance: ['', Validators.required],
+          sexe: ['MASCULIN', Validators.required],
+          telephone: ['', [Validators.pattern(/^\+?[0-9]{8,15}$/)]],
+          courriel: ['', [Validators.email]],
+          adresse: ['', [Validators.maxLength(200)]],
+          nationalite: ['', [Validators.maxLength(50)]]
         });
     }
 

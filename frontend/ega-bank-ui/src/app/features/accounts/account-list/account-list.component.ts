@@ -7,10 +7,10 @@ import { AccountService } from '../../../core/services/account.service';
 import { ClientService } from '../../../core/services/client.service';
 
 @Component({
-    selector: 'app-account-list',
-    standalone: true,
-    imports: [CommonModule, RouterLink, FormsModule, ReactiveFormsModule],
-    template: `
+  selector: 'app-account-list',
+  standalone: true,
+  imports: [CommonModule, RouterLink, FormsModule, ReactiveFormsModule],
+  template: `
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="flex justify-between items-center mb-6">
         <div>
@@ -55,10 +55,17 @@ import { ClientService } from '../../../core/services/client.service';
               </div>
               
               <div class="mt-4 flex gap-2">
-                <a [routerLink]="['/accounts', account.numeroCompte]" class="flex-1 text-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                <a [routerLink]="['/accounts', account.numeroCompte]" class="flex-1 text-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                   Détails
                 </a>
-                <button (click)="deleteAccount(account.id)" class="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50">
+                @if (account.actif) {
+                  <button (click)="deactivateAccount(account.id)" title="Désactiver" class="px-3 py-2 border border-orange-300 text-orange-600 rounded-lg hover:bg-orange-50 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+                    </svg>
+                  </button>
+                }
+                <button (click)="deleteAccount(account.id)" title="Supprimer" class="px-3 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                   </svg>
@@ -123,74 +130,84 @@ import { ClientService } from '../../../core/services/client.service';
   `
 })
 export class AccountListComponent implements OnInit {
-    accounts = signal<Account[]>([]);
-    clients = signal<Client[]>([]);
-    pageInfo = signal<PageResponse<Account> | null>(null);
-    showModal = signal(false);
-    form: FormGroup;
+  accounts = signal<Account[]>([]);
+  clients = signal<Client[]>([]);
+  pageInfo = signal<PageResponse<Account> | null>(null);
+  showModal = signal(false);
+  form: FormGroup;
 
-    constructor(
-        private accountService: AccountService,
-        private clientService: ClientService,
-        private fb: FormBuilder
-    ) {
-        this.form = this.fb.group({
-            clientId: ['', Validators.required],
-            typeCompte: ['EPARGNE', Validators.required]
-        });
-    }
+  constructor(
+    private accountService: AccountService,
+    private clientService: ClientService,
+    private fb: FormBuilder
+  ) {
+    this.form = this.fb.group({
+      clientId: ['', Validators.required],
+      typeCompte: ['EPARGNE', Validators.required]
+    });
+  }
 
-    ngOnInit(): void {
+  ngOnInit(): void {
+    this.loadAccounts(0);
+    this.loadClients();
+  }
+
+  loadAccounts(page: number): void {
+    this.accountService.getAll(page, 9).subscribe({
+      next: (res) => {
+        this.accounts.set(res.content);
+        this.pageInfo.set(res);
+      }
+    });
+  }
+
+  loadClients(): void {
+    this.clientService.getAll(0, 100).subscribe({
+      next: (res) => this.clients.set(res.content)
+    });
+  }
+
+  openModal(): void {
+    this.form.reset({ typeCompte: 'EPARGNE' });
+    this.showModal.set(true);
+  }
+
+  closeModal(): void {
+    this.showModal.set(false);
+  }
+
+  onSubmit(): void {
+    if (this.form.invalid) return;
+
+    const request: AccountRequest = {
+      clientId: Number(this.form.value.clientId),
+      typeCompte: this.form.value.typeCompte
+    };
+
+    this.accountService.create(request).subscribe({
+      next: () => {
+        this.closeModal();
         this.loadAccounts(0);
-        this.loadClients();
+      }
+    });
+  }
+
+  deleteAccount(id: number): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce compte ?')) {
+      this.accountService.delete(id).subscribe({
+        next: () => this.loadAccounts(0),
+        error: (err) => alert(err.error?.message || 'Erreur lors de la suppression')
+      });
     }
+  }
 
-    loadAccounts(page: number): void {
-        this.accountService.getAll(page, 9).subscribe({
-            next: (res) => {
-                this.accounts.set(res.content);
-                this.pageInfo.set(res);
-            }
-        });
+  deactivateAccount(id: number): void {
+    if (confirm('Êtes-vous sûr de vouloir désactiver ce compte ? Les opérations ne seront plus possibles.')) {
+      this.accountService.deactivate(id).subscribe({
+        next: () => this.loadAccounts(0),
+        error: (err) => alert(err.error?.message || 'Erreur lors de la désactivation')
+      });
     }
-
-    loadClients(): void {
-        this.clientService.getAll(0, 100).subscribe({
-            next: (res) => this.clients.set(res.content)
-        });
-    }
-
-    openModal(): void {
-        this.form.reset({ typeCompte: 'EPARGNE' });
-        this.showModal.set(true);
-    }
-
-    closeModal(): void {
-        this.showModal.set(false);
-    }
-
-    onSubmit(): void {
-        if (this.form.invalid) return;
-
-        const request: AccountRequest = {
-            clientId: Number(this.form.value.clientId),
-            typeCompte: this.form.value.typeCompte
-        };
-
-        this.accountService.create(request).subscribe({
-            next: () => {
-                this.closeModal();
-                this.loadAccounts(0);
-            }
-        });
-    }
-
-    deleteAccount(id: number): void {
-        if (confirm('Êtes-vous sûr de vouloir supprimer ce compte ?')) {
-            this.accountService.delete(id).subscribe({
-                next: () => this.loadAccounts(0),
-                error: (err) => alert(err.error?.message || 'Erreur lors de la suppression')
-            });
-        }
-    }
+  }
 }
+
