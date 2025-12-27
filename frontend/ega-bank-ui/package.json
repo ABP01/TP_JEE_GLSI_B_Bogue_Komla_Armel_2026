@@ -10,6 +10,8 @@
     "build-prod": "ng build --configuration production --base-href /angular/free/",
     "watch": "ng build --watch --configuration development",
     "test": "vitest",
+    "e2e": "npx playwright test",
+    "e2e:install": "npx playwright install --with-deps",
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
     "prettier": "prettier --write ./src"
@@ -46,6 +48,7 @@
     "@angular/compiler-cli": "21.0.3",
     "@eslint/eslintrc": "3.3.3",
     "@eslint/js": "9.39.1",
+    "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "24.10.2",
     "@typescript-eslint/eslint-plugin": "8.49.0",
