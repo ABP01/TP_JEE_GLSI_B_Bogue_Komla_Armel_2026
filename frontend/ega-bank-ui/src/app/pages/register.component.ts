@@ -201,9 +201,13 @@ export class RegisterComponent {
     this.errorMessage = '';
 
     this.auth.register(this.form.value).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.isLoading = false;
-        this.router.navigateByUrl('/login');
+        // Store tokens from registration response (auto-login)
+        if (res?.accessToken) localStorage.setItem('accessToken', res.accessToken);
+        if (res?.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
+        // Redirect to dashboard
+        this.router.navigateByUrl('/');
       },
       error: (err) => {
         this.isLoading = false;
