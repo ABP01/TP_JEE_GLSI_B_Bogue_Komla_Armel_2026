@@ -237,3 +237,174 @@ td {
 	margin-block: 1.5rem;
 	background-color: var(--gray-200);
 }
+
+/* Shared utility classes moved from per-component CSS files */
+.font-mono {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.text-right {
+	text-align: right;
+}
+
+.capitalize {
+	text-transform: capitalize;
+}
+
+.overflow-hidden {
+	overflow: hidden;
+}
+
+.text-xs {
+	font-size: 0.75rem;
+}
+
+.flex-col {
+	flex-direction: column;
+}
+
+.justify-between {
+	justify-content: space-between;
+}
+
+.items-start {
+	align-items: flex-start;
+}
+
+.tracking-wide {
+	letter-spacing: 0.05em;
+}
+
+.border-b {
+	border-bottom: 1px solid var(--gray-200);
+}
+
+.text-danger {
+	color: var(--danger);
+}
+
+.text-success {
+	color: var(--success);
+}
+
+.last\:border-b-0:last-child {
+	border-bottom: none;
+}
+
+.hover\:bg-gray-50:hover {
+	background-color: var(--gray-50);
+}
+
+.transition-colors {
+	transition: background-color 0.2s;
+}
+
+.mt-1 {
+	margin-top: 0.25rem;
+}
+
+.bg-gray-100 {
+	background-color: var(--gray-100);
+}
+
+.px-1 {
+	padding-left: 0.25rem;
+	padding-right: 0.25rem;
+}
+
+.py-0\.5 {
+	padding-top: 0.125rem;
+	padding-bottom: 0.125rem;
+}
+
+.rounded {
+	border-radius: 0.25rem;
+}
+
+.min-w-\[200px\] {
+	min-width: 200px;
+}
+
+.uppercase {
+	text-transform: uppercase;
+}
+
+/* Page-specific layout moved from component CSS */
+.grid-clients {
+	display: grid;
+	gap: 1rem;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+/* Sidebar styles moved from shared/app-sidebar.component.css */
+.sidebar {
+	width: 240px;
+	height: 100vh;
+	border-right: 1px solid var(--gray-200);
+	background: var(--white);
+	display: flex;
+	flex-direction: column;
+}
+
+.logo-area {
+	padding: 1rem;
+	border-bottom: 1px solid var(--gray-100);
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.logo-box {
+	width: 40px;
+	height: 40px;
+	border-radius: 0.375rem;
+	background: var(--primary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	font-weight: 700;
+}
+
+.nav-area {
+	flex: 1;
+	padding: 0.75rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.375rem;
+}
+
+.nav-item {
+	padding: 0.5rem;
+	border-radius: 0.375rem;
+	text-decoration: none;
+	color: inherit;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	transition: background-color 0.2s;
+}
+
+.nav-item:hover {
+	background-color: var(--gray-100);
+}
+
+.footer-area {
+	padding: 0.75rem;
+	border-top: 1px solid var(--gray-100);
+	margin-top: auto;
+}
+
+.w-full {
+	width: 100%;
+}
+
+.hover-red:hover {
+	background-color: #fef2f2;
+}
+
+.text-danger {
+	color: var(--danger);
+}
+

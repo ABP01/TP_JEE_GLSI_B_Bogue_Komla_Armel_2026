@@ -9,7 +9,6 @@ import { statusClassObject, statusDisplay } from '../shared/status.util';
   selector: 'app-accounts',
   imports: [CommonModule],
   templateUrl: './accounts.component.html',
-  styleUrls: ['./accounts.component.css']
 })
 export class AccountsComponent {
   accounts = mockAccounts;

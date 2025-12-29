@@ -14,7 +14,7 @@ const navItems = [
   selector: 'app-sidebar',
   imports: [CommonModule],
   templateUrl: './app-sidebar.component.html',
-  styleUrl: './app-sidebar.component.css'
+  // styles centralized in global styles.css
 })
 export class AppSidebar {
   items = navItems;

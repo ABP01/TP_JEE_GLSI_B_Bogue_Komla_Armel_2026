@@ -9,7 +9,6 @@ import { transactionAmountClass, transactionSign } from '../shared/status.util';
   selector: 'app-transactions',
   imports: [CommonModule],
   templateUrl: './transactions.component.html',
-  styleUrls: ['./transactions.component.css']
 })
 export class TransactionsComponent {
   transactions = mockTransactions;

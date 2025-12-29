@@ -8,7 +8,6 @@ import { mockAccounts, mockClients } from '../mock-data';
   selector: 'app-clients',
   imports: [CommonModule],
   templateUrl: './clients.component.html',
-  styleUrls: ['./clients.component.css']
 })
 export class ClientsComponent {
   clients = mockClients;
