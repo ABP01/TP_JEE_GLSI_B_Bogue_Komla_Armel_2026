@@ -1,7 +1,20 @@
 <div class="p-6">
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold mb-2">Account Management</h1>
-        <p class="text-gray-500">Overview of all customer accounts and financial holdings.</p>
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold mb-2">Account Management</h1>
+            <p class="text-gray-500">Overview of all customer accounts and financial holdings.</p>
+        </div>
+        <a routerLink="/accounts/new" class="btn btn-primary">
+            <i class="ri-add-circle-line" style="margin-right: 0.5rem;"></i> Open Account
+        </a>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger mb-4">
+        <i class="ri-error-warning-line"></i> {{ errorMessage }}
+        <button (click)="loadAccounts()" class="btn btn-sm btn-secondary ml-2">
+            <i class="ri-refresh-line"></i> Retry
+        </button>
     </div>
 
     <!-- Loading State (Skeleton) -->
@@ -45,11 +58,6 @@
         </div>
     </div>
 
-    <!-- Error State -->
-    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger mb-4">
-        {{ errorMessage }}
-    </div>
-
     <!-- Accounts Table -->
     <div *ngIf="!isLoading && accounts.length > 0" class="card overflow-hidden">
         <div class="table-responsive">
@@ -67,16 +75,24 @@
                 <tbody>
                     <tr *ngFor="let account of accounts">
                         <td>
-                            <div class="font-medium">{{ getTypeDisplay(account.typeCompte) }}</div>
+                            <div class="font-medium flex items-center gap-1">
+                                <i class="ri-wallet-3-line text-primary"></i>
+                                {{ getTypeDisplay(account.typeCompte) }}
+                            </div>
                             <div class="text-sm text-gray-500 font-mono">{{ account.numeroCompte }}</div>
                         </td>
                         <td>
-                            <span *ngIf="account.clientNomComplet">{{ account.clientNomComplet }}</span>
-                            <span *ngIf="!account.clientNomComplet" class="text-gray-400">Client #{{ account.clientId
-                                }}</span>
+                            <span *ngIf="account.clientNomComplet" class="flex items-center gap-1">
+                                <i class="ri-user-line text-gray-400"></i>
+                                {{ account.clientNomComplet }}
+                            </span>
+                            <span *ngIf="!account.clientNomComplet" class="text-gray-400">
+                                Client #{{ account.clientId }}
+                            </span>
                         </td>
                         <td>
                             <span class="badge" [ngClass]="getStatusClass(account.actif)">
+                                <i [class]="account.actif ? 'ri-checkbox-circle-line' : 'ri-close-circle-line'"></i>
                                 {{ getStatusDisplay(account.actif) }}
                             </span>
                         </td>
@@ -88,7 +104,7 @@
                         </td>
                         <td>
                             <button (click)="viewTransactions(account.numeroCompte)" class="btn btn-sm btn-secondary">
-                                Transactions
+                                <i class="ri-exchange-dollar-line"></i> Transactions
                             </button>
                         </td>
                     </tr>
@@ -99,6 +115,13 @@
 
     <!-- Empty State -->
     <div *ngIf="!isLoading && accounts.length === 0 && !errorMessage" class="card p-12 text-center">
-        <p class="text-gray-500">No accounts found.</p>
+        <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">
+            <i class="ri-bank-card-2-line"></i>
+        </div>
+        <h3 class="font-bold text-lg mb-2 text-gray-700">No Accounts Yet</h3>
+        <p class="text-gray-500 mb-4">Open your first account to get started.</p>
+        <a routerLink="/accounts/new" class="btn btn-primary">
+            <i class="ri-add-line" style="margin-right: 0.5rem;"></i> Open First Account
+        </a>
     </div>
 </div>

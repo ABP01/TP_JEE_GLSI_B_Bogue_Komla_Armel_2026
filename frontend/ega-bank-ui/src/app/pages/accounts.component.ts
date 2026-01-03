@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AccountResponse } from '../models/account.model';
 import { AccountService } from '../services/account.service';
 import { ClientService } from '../services/client.service';
@@ -8,7 +8,7 @@ import { ClientService } from '../services/client.service';
 @Component({
   standalone: true,
   selector: 'app-accounts',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './accounts.component.html',
 })
 export class AccountsComponent implements OnInit {
@@ -34,7 +34,7 @@ export class AccountsComponent implements OnInit {
     });
   }
 
-  private loadAccounts(): void {
+  loadAccounts(): void {
     this.isLoading = true;
     this.errorMessage = '';
 

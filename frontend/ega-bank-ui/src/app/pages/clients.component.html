@@ -1,7 +1,20 @@
 <div class="p-6">
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold mb-2">Client Management</h1>
-        <p class="text-gray-500">View and manage your bank's clients and their associations.</p>
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold mb-2">Client Management</h1>
+            <p class="text-gray-500">View and manage your bank's clients and their associations.</p>
+        </div>
+        <a routerLink="/clients/new" class="btn btn-primary">
+            <i class="ri-user-add-line" style="margin-right: 0.5rem;"></i> Add Client
+        </a>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger mb-4">
+        <i class="ri-error-warning-line"></i> {{ errorMessage }}
+        <button (click)="loadClients()" class="btn btn-sm btn-secondary ml-2">
+            <i class="ri-refresh-line"></i> Retry
+        </button>
     </div>
 
     <!-- Loading State (Skeleton) -->
@@ -33,22 +46,27 @@
                         <div class="font-bold text-lg">{{client.prenom}} {{client.nom}}</div>
                         <div class="text-xs text-gray-500">ID: {{client.id}}</div>
                     </div>
-                    <div class="text-sm text-gray-600">
+                    <div class="text-sm text-gray-600 flex items-center gap-1">
+                        <i class="ri-bank-card-line"></i>
                         {{client.nombreComptes || 0}} accounts
                     </div>
                 </div>
-                <div class="text-sm text-gray-700 mb-2" *ngIf="client.courriel">{{client.courriel}}</div>
-                <div class="text-sm text-gray-500" *ngIf="client.telephone">{{client.telephone}}</div>
+                <div class="text-sm text-gray-700 mb-1 flex items-center gap-1" *ngIf="client.courriel">
+                    <i class="ri-mail-line text-gray-400"></i> {{client.courriel}}
+                </div>
+                <div class="text-sm text-gray-500 flex items-center gap-1" *ngIf="client.telephone">
+                    <i class="ri-phone-line text-gray-400"></i> {{client.telephone}}
+                </div>
             </div>
             <div class="flex gap-2 mt-4">
                 <button (click)="viewDetails(client.id)" class="btn btn-secondary text-sm flex-1">
-                    Edit
+                    <i class="ri-edit-line"></i> Edit
                 </button>
                 <button (click)="viewAccounts(client.id)" class="btn btn-primary text-sm flex-1">
-                    Accounts
+                    <i class="ri-bank-card-line"></i> Accounts
                 </button>
-                <button (click)="deleteClient(client.id)" class="btn btn-danger text-sm">
-                    🗑️
+                <button (click)="deleteClient(client.id)" class="btn btn-danger text-sm" title="Delete client">
+                    <i class="ri-delete-bin-line"></i>
                 </button>
             </div>
         </div>
@@ -56,6 +74,13 @@
 
     <!-- Empty State -->
     <div *ngIf="!isLoading && clients.length === 0 && !errorMessage" class="card p-12 text-center">
-        <p class="text-gray-500">No clients found.</p>
+        <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">
+            <i class="ri-user-add-line"></i>
+        </div>
+        <h3 class="font-bold text-lg mb-2 text-gray-700">No Clients Yet</h3>
+        <p class="text-gray-500 mb-4">Get started by adding your first client.</p>
+        <a routerLink="/clients/new" class="btn btn-primary">
+            <i class="ri-add-line" style="margin-right: 0.5rem;"></i> Add First Client
+        </a>
     </div>
 </div>

@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ClientResponse } from '../models/client.model';
 import { ClientService } from '../services/client.service';
 
 @Component({
   standalone: true,
   selector: 'app-clients',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './clients.component.html',
 })
 export class ClientsComponent implements OnInit {
@@ -21,8 +21,9 @@ export class ClientsComponent implements OnInit {
     this.loadClients();
   }
 
-  private loadClients(): void {
+  loadClients(): void {
     this.isLoading = true;
+    this.errorMessage = '';
     this.clientService.getAll(0, 100).subscribe({
       next: (response) => {
         this.clients = response.content || [];
