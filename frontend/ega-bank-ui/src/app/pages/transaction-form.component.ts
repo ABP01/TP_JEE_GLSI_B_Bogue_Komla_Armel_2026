@@ -376,7 +376,6 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
         montant: Number(v.amount),
         description: v.description || undefined
       }).subscribe({
-        next: () => this.handleSuccess('Transfer completed successfully!'),
         next: (tx) => this.handleSuccess('Transfer completed successfully!', tx),
         error: (e) => this.handleError(e)
       });

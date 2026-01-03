@@ -103,7 +103,7 @@ import { AppStore } from '../stores/app.store';
               <i class="ri-arrow-left-line"></i> Cancel
             </a>
             <button type="submit" 
-                    [disabled]="form.invalid || isSubmitting || clients.length === 0" 
+                    [disabled]="form.invalid || isSubmitting" 
                     class="btn btn-primary flex-1">
               <span *ngIf="isSubmitting">
                 <i class="ri-loader-4-line spinner-icon"></i> Creating...
