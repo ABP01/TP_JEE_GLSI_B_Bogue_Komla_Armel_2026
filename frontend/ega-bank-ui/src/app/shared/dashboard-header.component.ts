@@ -120,14 +120,14 @@ import { ClientService } from '../services/client.service';
                    <div class="font-medium text-sm">Admin User</div>
                    <div class="text-xs text-gray-500">admin@egabank.com</div>
                </div>
-               <a class="dropdown-item flex items-center gap-2">
+               <a (click)="goSettings()" class="dropdown-item flex items-center gap-2 cursor-pointer">
                     <i class="ri-settings-4-line text-gray-400"></i> Settings
                </a>
-               <a class="dropdown-item flex items-center gap-2">
+               <a class="dropdown-item flex items-center gap-2 cursor-pointer">
                     <i class="ri-user-line text-gray-400"></i> Profile
                </a>
                <div class="divider" style="margin:4px 0;"></div>
-               <a (click)="logout()" class="dropdown-item text-danger flex items-center gap-2">
+               <a (click)="logout()" class="dropdown-item text-danger flex items-center gap-2 cursor-pointer">
                     <i class="ri-logout-box-line"></i> Logout
                </a>
            </div>
@@ -138,6 +138,59 @@ import { ClientService } from '../services/client.service';
     <!-- Click overlay to close dropdowns -->
     <div *ngIf="showSearch || showNotifications || showProfile" (click)="closeAll()" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:30;"></div>
   `,
+  styles: [`
+    .search-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        z-index: 50;
+        margin-top: 8px;
+        overflow: hidden;
+    }
+    .search-item {
+        padding: 10px 16px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .search-item:hover {
+        background-color: #f9fafb;
+    }
+    .dropdown-menu {
+        position: absolute;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        z-index: 50;
+        overflow: hidden;
+    }
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 16px;
+        font-size: 0.875rem;
+        color: #374151;
+        transition: background-color 0.2s;
+    }
+    .dropdown-item:hover {
+        background-color: #f3f4f6;
+    }
+    .notification-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 10px;
+        height: 10px;
+        background-color: #ef4444;
+        border-radius: 50%;
+        border: 2px solid white;
+    }
+  `]
 })
 export class DashboardHeader {
   searchQuery = '';
@@ -212,7 +265,13 @@ export class DashboardHeader {
     this.showProfile = false;
   }
 
+  goSettings() {
+    this.router.navigate(['/settings']);
+    this.closeAll();
+  }
+
   logout() {
     this.auth.logout();
+    this.closeAll();
   }
 }

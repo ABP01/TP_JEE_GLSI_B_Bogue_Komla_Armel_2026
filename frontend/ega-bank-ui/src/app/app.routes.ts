@@ -7,6 +7,7 @@ import { ClientsComponent } from './pages/clients.component';
 import { DashboardComponent } from './pages/dashboard.component';
 import { LoginComponent } from './pages/login.component';
 import { RegisterComponent } from './pages/register.component';
+import { SettingsComponent } from './pages/settings.component';
 import { TransactionFormComponent } from './pages/transaction-form.component';
 import { TransactionsComponent } from './pages/transactions.component';
 
@@ -20,5 +21,6 @@ export const routes: Routes = [
 	{ path: 'accounts/new', component: AccountCreateComponent, canActivate: [AuthGuard] },
 	{ path: 'transactions', component: TransactionsComponent, canActivate: [AuthGuard] },
 	{ path: 'transactions/new', component: TransactionFormComponent, canActivate: [AuthGuard] },
+	{ path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
 	{ path: '**', redirectTo: 'clients' },
 ];

@@ -2,7 +2,7 @@
     <!-- Logo (Click goes to Dashboard /) -->
     <!-- Logo (Click goes to Dashboard /) -->
     <div class="logo-area" style="cursor: pointer; justify-content: center;" routerLink="/">
-        <img src="/assets/logoega.svg" alt="EGA Bank" style="height: 40px; width: auto;">
+        <img src="/assets/logoega.png" alt="EGA Bank" style="height: 40px; width: auto;">
     </div>
 
     <!-- Navigation -->
@@ -16,7 +16,8 @@
 
     <!-- Footer Actions -->
     <div class="footer-area">
-        <a class="nav-item mb-2" style="color: var(--gray-500);">
+        <a routerLink="/settings" class="nav-item mb-2" style="color: var(--gray-500); cursor: pointer;"
+            routerLinkActive="bg-gray-100 text-primary">
             <i class="ri-settings-3-line" style="font-size: 1.25rem;"></i>
             <span>Settings</span>
         </a>

@@ -13,7 +13,7 @@ import { AuthService } from '../services/auth.service';
       <div class="card login-card">
         <div class="header">
            <div class="logo-container">
-            <img src="/assets/logoega.svg" alt="EGA Bank" class="app-logo" />
+            <img src="/assets/logoega.png" alt="EGA Bank" class="app-logo" />
            </div>
           <h2 class="text-2xl font-bold mb-2 text-center">Create Account</h2>
           <p class="text-gray-500 text-sm text-center">Join EGA Bank today</p>
