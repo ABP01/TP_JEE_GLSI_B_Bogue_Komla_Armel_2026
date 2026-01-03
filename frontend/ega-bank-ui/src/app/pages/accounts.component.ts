@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { AccountResponse } from '../models/account.model';
 import { AccountService } from '../services/account.service';
 import { ClientService } from '../services/client.service';
+import { AppStore } from '../stores/app.store';
 
 @Component({
   standalone: true,
@@ -11,19 +13,21 @@ import { ClientService } from '../services/client.service';
   imports: [CommonModule, RouterLink],
   templateUrl: './accounts.component.html',
 })
-export class AccountsComponent implements OnInit {
+export class AccountsComponent implements OnInit, OnDestroy {
   accounts: AccountResponse[] = [];
   clientId: number | null = null;
   isLoading = true;
   errorMessage = '';
   // Cache for client names
   private clientCache: Map<number, string> = new Map();
+  private destroy$ = new Subject<void>();
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private accountService: AccountService,
-    private clientService: ClientService
+    private clientService: ClientService,
+    private store: AppStore
   ) { }
 
   ngOnInit(): void {
@@ -32,6 +36,21 @@ export class AccountsComponent implements OnInit {
       this.clientId = clientIdParam ? Number(clientIdParam) : null;
       this.loadAccounts();
     });
+    
+    // S'abonner aux changements du store
+    this.store.dataChanged$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(event => {
+      console.log('[Accounts] Data change event:', event);
+      if (event.type === 'account' || event.type === 'transaction' || event.type === 'system') {
+        this.loadAccounts();
+      }
+    });
+  }
+  
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadAccounts(): void {

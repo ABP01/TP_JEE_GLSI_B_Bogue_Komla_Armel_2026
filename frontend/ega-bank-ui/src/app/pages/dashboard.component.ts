@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { catchError, forkJoin, of, timeout } from 'rxjs';
+import { catchError, forkJoin, of, Subject, takeUntil, timeout } from 'rxjs';
 import { AccountResponse } from '../models/account.model';
 import { ClientResponse } from '../models/client.model';
 import { PageResponse } from '../models/page.model';
 import { AccountService } from '../services/account.service';
 import { ClientService } from '../services/client.service';
 import { DashboardService } from '../services/dashboard.service';
+import { AppStore } from '../stores/app.store';
 
 @Component({
     selector: 'app-dashboard',
@@ -15,7 +16,7 @@ import { DashboardService } from '../services/dashboard.service';
     imports: [CommonModule, RouterLink],
     templateUrl: './dashboard.component.html'
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
     isLoading = true;
     hasError = false;
     errorMessage = '';
@@ -29,18 +30,56 @@ export class DashboardComponent implements OnInit {
     };
     recentClients: ClientResponse[] = [];
     recentAccounts: AccountResponse[] = [];
+    
+    private destroy$ = new Subject<void>();
 
     constructor(
         private clientService: ClientService,
         private accountService: AccountService,
-        private dashboardService: DashboardService
+        private dashboardService: DashboardService,
+        private store: AppStore
     ) { }
 
     ngOnInit() {
         this.loadData();
+        
+        // S'abonner aux changements du store pour rafraîchir automatiquement
+        this.store.dataChanged$.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe(event => {
+            console.log('[Dashboard] Data change event received:', event);
+            // Rafraîchir les données quand il y a un changement
+            if (event.type === 'system' && event.action === 'refresh') {
+                this.loadData();
+            } else if (event.type === 'transaction' && event.action === 'balance_update') {
+                // Mettre à jour les soldes localement si possible
+                this.updateLocalBalances(event.data);
+            } else if (event.type === 'account' || event.type === 'client') {
+                // Rafraîchir pour les créations/suppressions
+                this.loadData();
+            }
+        });
+    }
+    
+    ngOnDestroy() {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     retry() {
+        this.loadData();
+    }
+    
+    private updateLocalBalances(data: { numeroCompte: string, newBalance: number }) {
+        // Mettre à jour le compte dans la liste récente
+        this.recentAccounts = this.recentAccounts.map(acc => 
+            acc.numeroCompte === data.numeroCompte 
+                ? { ...acc, solde: data.newBalance }
+                : acc
+        );
+        
+        // Recalculer le total balance approximatif
+        // (Pour une vraie mise à jour, on recharge depuis le backend)
         this.loadData();
     }
 

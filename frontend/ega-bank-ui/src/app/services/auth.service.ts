@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -6,7 +6,11 @@ import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  constructor(private api: ApiService, private router: Router) { }
+  constructor(
+    private api: ApiService, 
+    private router: Router,
+    private injector: Injector
+  ) { }
 
   register(payload: any): Observable<any> {
     return this.api.post('/auth/register', payload).pipe(
@@ -33,6 +37,16 @@ export class AuthService {
   logout() {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    
+    // Réinitialiser le store pour nettoyer l'état
+    try {
+      const { AppStore } = require('../stores/app.store');
+      const store = this.injector.get(AppStore);
+      store.reset();
+    } catch (e) {
+      console.warn('Could not reset store on logout');
+    }
+    
     this.router.navigateByUrl('/login');
   }
 

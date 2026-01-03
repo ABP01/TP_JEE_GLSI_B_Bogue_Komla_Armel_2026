@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { ClientResponse } from '../models/client.model';
 import { ClientService } from '../services/client.service';
+import { AppStore } from '../stores/app.store';
 
 @Component({
   standalone: true,
@@ -10,15 +12,36 @@ import { ClientService } from '../services/client.service';
   imports: [CommonModule, RouterLink],
   templateUrl: './clients.component.html',
 })
-export class ClientsComponent implements OnInit {
+export class ClientsComponent implements OnInit, OnDestroy {
   clients: ClientResponse[] = [];
   isLoading = true;
   errorMessage = '';
+  
+  private destroy$ = new Subject<void>();
 
-  constructor(private router: Router, private clientService: ClientService) { }
+  constructor(
+    private router: Router, 
+    private clientService: ClientService,
+    private store: AppStore
+  ) { }
 
   ngOnInit(): void {
     this.loadClients();
+    
+    // S'abonner aux changements du store
+    this.store.dataChanged$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(event => {
+      console.log('[Clients] Data change event:', event);
+      if (event.type === 'client' || event.type === 'system') {
+        this.loadClients();
+      }
+    });
+  }
+  
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadClients(): void {
@@ -28,6 +51,8 @@ export class ClientsComponent implements OnInit {
       next: (response) => {
         this.clients = response.content || [];
         this.isLoading = false;
+        // Mettre à jour le store
+        this.store.setClients(this.clients, response.totalElements);
       },
       error: (err) => {
         console.error('Failed to load clients', err);
@@ -50,6 +75,8 @@ export class ClientsComponent implements OnInit {
 
     this.clientService.delete(id).subscribe({
       next: () => {
+        // Mettre à jour le store
+        this.store.removeClient(id);
         this.loadClients(); // Reload list
       },
       error: (err) => alert('Failed to delete client')

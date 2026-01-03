@@ -45,7 +45,8 @@ public class AccountServiceImpl implements AccountService {
     public PageResponse<AccountResponse> getAllAccounts(int page, int size) {
         log.debug("Récupération de tous les comptes - page: {}, size: {}", page, size);
         Pageable pageable = PageRequest.of(page, size, Sort.by("dateCreation").descending());
-        Page<Account> accountPage = accountRepository.findAllActive(pageable);
+        // Retourner tous les comptes (actifs et inactifs)
+        Page<Account> accountPage = accountRepository.findAll(pageable);
 
         return PageResponse.of(
                 accountMapper.toResponseList(accountPage.getContent()),

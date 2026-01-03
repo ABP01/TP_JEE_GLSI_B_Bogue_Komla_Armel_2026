@@ -1,7 +1,13 @@
 <div class="p-6">
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold mb-2">Transaction History</h1>
-        <p class="text-gray-500">A complete record of banking activities.</p>
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold mb-2">Transaction History</h1>
+            <p class="text-gray-500">A complete record of banking activities.</p>
+        </div>
+        <a *ngIf="accountId" [routerLink]="['/transactions/new']" [queryParams]="{accountId: accountId}"
+            class="btn btn-primary">
+            <i class="ri-add-line" style="margin-right: 0.5rem;"></i> New Transaction
+        </a>
     </div>
 
     <!-- Loading State (Skeleton) -->
@@ -31,39 +37,74 @@
 
     <!-- Error State -->
     <div *ngIf="errorMessage && !isLoading" class="alert alert-danger mb-4">
-        {{ errorMessage }}
+        <i class="ri-error-warning-line"></i> {{ errorMessage }}
+        <a *ngIf="!accountId" routerLink="/accounts" class="btn btn-sm btn-secondary ml-2">
+            <i class="ri-bank-card-line"></i> Select Account
+        </a>
     </div>
 
     <!-- Account Summary -->
-    <div *ngIf="selectedAccount && !isLoading" class="flex gap-4 mb-6">
-        <div class="card p-4 min-w-[200px]">
-            <div class="text-xs text-gray-500 uppercase tracking-wide">Current Balance</div>
-            <div class="font-bold text-xl">{{ selectedAccount.solde | currency:'XOF':'symbol':'1.0-0' }}</div>
+    <div *ngIf="selectedAccount && !isLoading" class="grid gap-4 mb-6"
+        style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+        <div class="card p-4">
+            <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1">
+                <i class="ri-money-dollar-circle-line"></i> Current Balance
+            </div>
+            <div class="font-bold text-xl" [class.text-success]="selectedAccount.solde > 0"
+                [class.text-danger]="selectedAccount.solde <= 0">
+                {{ selectedAccount.solde | currency:'XOF':'symbol':'1.0-0' }}
+            </div>
         </div>
-        <div class="card p-4 min-w-[200px]">
-            <div class="text-xs text-gray-500 uppercase tracking-wide">Account Type</div>
+        <div class="card p-4">
+            <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1">
+                <i class="ri-wallet-3-line"></i> Account Type
+            </div>
             <div class="font-bold text-xl">{{ getAccountTypeDisplay(selectedAccount.typeCompte) }}</div>
         </div>
-        <div class="card p-4 min-w-[200px]">
-            <div class="text-xs text-gray-500 uppercase tracking-wide">Account Number</div>
+        <div class="card p-4">
+            <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1">
+                <i class="ri-bank-card-line"></i> Account Number
+            </div>
             <div class="font-bold text-lg font-mono">{{ selectedAccount.numeroCompte }}</div>
+        </div>
+        <div class="card p-4">
+            <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1">
+                <i class="ri-exchange-dollar-line"></i> Transactions
+            </div>
+            <div class="font-bold text-xl">{{ transactions.length }}</div>
         </div>
     </div>
 
     <!-- Transactions List -->
     <div *ngIf="!isLoading && transactions.length > 0" class="card overflow-hidden">
+        <div class="p-4 border-b bg-gray-50 flex justify-between items-center">
+            <h3 class="font-bold flex items-center gap-2">
+                <i class="ri-history-line text-primary"></i> Recent Transactions
+            </h3>
+            <span class="text-sm text-gray-500">{{ transactions.length }} transaction(s)</span>
+        </div>
         <div *ngFor="let txn of transactions"
             class="transaction-item p-4 border-b flex justify-between items-center last:border-b-0 hover:bg-gray-50 transition-colors">
-            <div>
-                <div class="font-medium">
-                    {{ getTypeDisplay(txn.type) }}
-                    <span *ngIf="txn.typeLibelle" class="text-gray-500"> - {{ txn.typeLibelle }}</span>
+            <div class="flex items-center gap-3">
+                <!-- Transaction Icon -->
+                <div class="w-10 h-10 rounded-full flex items-center justify-center"
+                    [class.bg-green-100]="txn.type === 'DEPOT' || txn.type === 'VIREMENT_ENTRANT'"
+                    [class.text-success]="txn.type === 'DEPOT' || txn.type === 'VIREMENT_ENTRANT'"
+                    [class.bg-red-100]="txn.type === 'RETRAIT' || txn.type === 'VIREMENT_SORTANT'"
+                    [class.text-danger]="txn.type === 'RETRAIT' || txn.type === 'VIREMENT_SORTANT'">
+                    <i [class]="getTypeIcon(txn.type)"></i>
                 </div>
-                <div class="text-sm text-gray-500 mt-1">
-                    <span *ngIf="txn.description" class="mr-2">{{ txn.description }}</span>
-                    <span class="font-mono text-xs bg-gray-100 px-1 py-0.5 rounded">{{ txn.id }}</span> •
-                    {{ txn.dateTransaction | date:'medium' }}
-                    <span *ngIf="txn.compteDestination"> • To: {{ txn.compteDestination }}</span>
+                <div>
+                    <div class="font-medium">
+                        {{ getTypeDisplay(txn.type) }}
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <span *ngIf="txn.description" class="mr-2">{{ txn.description }}</span>
+                        <span class="text-xs">{{ txn.dateTransaction | date:'medium' }}</span>
+                        <span *ngIf="txn.compteDestination" class="ml-2">
+                            <i class="ri-arrow-right-line"></i> {{ txn.compteDestination }}
+                        </span>
+                    </div>
                 </div>
             </div>
             <div class="text-right">
@@ -79,6 +120,25 @@
 
     <!-- Empty State -->
     <div *ngIf="!isLoading && transactions.length === 0 && !errorMessage && accountId" class="card p-12 text-center">
-        <p class="text-gray-500">No transactions found for this account.</p>
+        <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">
+            <i class="ri-exchange-dollar-line"></i>
+        </div>
+        <h3 class="font-bold text-lg mb-2 text-gray-700">No Transactions Yet</h3>
+        <p class="text-gray-500 mb-4">This account has no transaction history.</p>
+        <a [routerLink]="['/transactions/new']" [queryParams]="{accountId: accountId}" class="btn btn-primary">
+            <i class="ri-add-line" style="margin-right: 0.5rem;"></i> Make First Transaction
+        </a>
+    </div>
+
+    <!-- No Account Selected -->
+    <div *ngIf="!isLoading && !accountId && !errorMessage" class="card p-12 text-center">
+        <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">
+            <i class="ri-bank-card-2-line"></i>
+        </div>
+        <h3 class="font-bold text-lg mb-2 text-gray-700">No Account Selected</h3>
+        <p class="text-gray-500 mb-4">Please select an account to view its transaction history.</p>
+        <a routerLink="/accounts" class="btn btn-primary">
+            <i class="ri-bank-card-line" style="margin-right: 0.5rem;"></i> View Accounts
+        </a>
     </div>
 </div>
