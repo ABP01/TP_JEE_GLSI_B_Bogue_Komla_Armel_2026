@@ -21,11 +21,11 @@ import { AuthService } from '../services/auth.service';
 
         <!-- Message de session expirée -->
         <div *ngIf="sessionExpired" class="alert alert-warning">
-          <span>🔒</span> Your session has expired. Please sign in again.
+          <i class="ri-lock-line"></i> Your session has expired. Please sign in again.
         </div>
 
         <div *ngIf="errorMessage" class="alert alert-danger">
-           <span>⚠️</span> {{ errorMessage }}
+           <i class="ri-error-warning-line"></i> {{ errorMessage }}
         </div>
 
         <form [formGroup]="form" (ngSubmit)="submit()">

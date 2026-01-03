@@ -20,11 +20,11 @@ import { AuthService } from '../services/auth.service';
         </div>
 
         <div *ngIf="errorMessage" class="alert alert-danger">
-           <span>⚠️</span> {{ errorMessage }}
+           <i class="ri-error-warning-line"></i> {{ errorMessage }}
         </div>
 
         <div *ngIf="successMessage" class="alert alert-success">
-           <span>✅</span> {{ successMessage }}
+           <i class="ri-checkbox-circle-line"></i> {{ successMessage }}
         </div>
 
         <form [formGroup]="form" (ngSubmit)="submit()">

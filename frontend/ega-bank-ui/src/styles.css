@@ -514,6 +514,12 @@ td {
 	color: #166534;
 }
 
+.alert-warning {
+	background-color: #fef3c7;
+	border: 1px solid #fcd34d;
+	color: #92400e;
+}
+
 /* Button sizes */
 .btn-sm {
 	padding: 0.25rem 0.5rem;
@@ -627,6 +633,14 @@ td {
 .py-12 {
 	padding-top: 3rem;
 	padding-bottom: 3rem;
+}
+
+.ml-2 {
+	margin-left: 0.5rem;
+}
+
+.text-info {
+	color: var(--info);
 }
 
 /* Icon Alignment Fix */

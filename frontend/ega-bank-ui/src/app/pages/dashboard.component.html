@@ -4,37 +4,63 @@
         <p class="text-gray-500">Overview of your bank's performance.</p>
     </div>
 
+    <!-- Error State -->
+    <div *ngIf="hasError" class="card p-6 mb-6 border-danger" style="border-left: 4px solid var(--danger);">
+        <div class="flex items-center gap-4">
+            <div class="text-danger" style="font-size: 2rem;">
+                <i class="ri-error-warning-line"></i>
+            </div>
+            <div class="flex-1">
+                <h3 class="font-bold text-danger mb-1">Connection Error</h3>
+                <p class="text-gray-600">{{ errorMessage }}</p>
+            </div>
+            <button (click)="retry()" class="btn btn-primary">
+                <i class="ri-refresh-line" style="margin-right: 0.5rem;"></i> Retry
+            </button>
+        </div>
+    </div>
+
     <!-- Stats Grid -->
     <div class="grid-dashboard">
         <!-- Total Clients -->
         <div class="card p-4">
-            <div class="text-sm text-gray-500 mb-1">Total Clients</div>
+            <div class="flex items-center gap-2 text-sm text-gray-500 mb-1">
+                <i class="ri-user-line"></i>
+                <span>Total Clients</span>
+            </div>
             <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
             <div *ngIf="!isLoading" class="text-2xl font-bold">{{ stats.totalClients }}</div>
         </div>
 
         <!-- Total Accounts -->
         <div class="card p-4">
-            <div class="text-sm text-gray-500 mb-1">Total Accounts</div>
+            <div class="flex items-center gap-2 text-sm text-gray-500 mb-1">
+                <i class="ri-bank-card-line"></i>
+                <span>Total Accounts</span>
+            </div>
             <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
             <div *ngIf="!isLoading" class="text-2xl font-bold">{{ stats.totalAccounts }}</div>
         </div>
 
-        <!-- Active Accounts Estimate -->
+        <!-- Active Accounts -->
         <div class="card p-4">
-            <div class="text-sm text-gray-500 mb-1">Active Accounts (Sample)</div>
+            <div class="flex items-center gap-2 text-sm text-gray-500 mb-1">
+                <i class="ri-checkbox-circle-line"></i>
+                <span>Active Accounts</span>
+            </div>
             <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
-            <div *ngIf="!isLoading" class="text-2xl font-bold">{{ stats.activeAccounts }}</div>
-            <div *ngIf="!isLoading" class="text-xs text-gray-400 mt-1">From recent list</div>
+            <div *ngIf="!isLoading" class="text-2xl font-bold text-success">{{ stats.activeAccounts }}</div>
         </div>
 
-        <!-- Total Balance Estimate -->
+        <!-- Total Balance -->
         <div class="card p-4">
-            <div class="text-sm text-gray-500 mb-1">Total Balance (Sample)</div>
+            <div class="flex items-center gap-2 text-sm text-gray-500 mb-1">
+                <i class="ri-money-dollar-circle-line"></i>
+                <span>Total Balance</span>
+            </div>
             <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
             <div *ngIf="!isLoading" class="text-2xl font-bold text-primary">{{ stats.totalBalance |
                 currency:'XOF':'symbol':'1.0-0' }}</div>
-            <div *ngIf="!isLoading" class="text-xs text-gray-400 mt-1">From recent list</div>
         </div>
     </div>
 
@@ -42,7 +68,10 @@
         <!-- Recent Clients -->
         <div class="card overflow-hidden">
             <div class="p-4 border-b flex justify-between items-center">
-                <h3 class="font-bold">Recent Clients</h3>
+                <h3 class="font-bold flex items-center gap-2">
+                    <i class="ri-user-line text-primary"></i>
+                    Recent Clients
+                </h3>
                 <a routerLink="/clients" class="text-sm text-primary" style="text-decoration: none;">View All</a>
             </div>
             <div>
@@ -59,7 +88,13 @@
                     </div>
                 </div>
                 <div *ngIf="!isLoading && recentClients.length === 0" class="p-6 text-center text-gray-500">
-                    No clients yet.
+                    <div style="font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.5;">
+                        <i class="ri-user-add-line"></i>
+                    </div>
+                    <p class="mb-2">No clients yet.</p>
+                    <a routerLink="/clients/new" class="text-primary font-medium">
+                        <i class="ri-add-line"></i> Add your first client
+                    </a>
                 </div>
             </div>
         </div>
@@ -67,7 +102,10 @@
         <!-- Recent Accounts -->
         <div class="card overflow-hidden">
             <div class="p-4 border-b flex justify-between items-center">
-                <h3 class="font-bold">Recent Accounts</h3>
+                <h3 class="font-bold flex items-center gap-2">
+                    <i class="ri-bank-card-line text-primary"></i>
+                    Recent Accounts
+                </h3>
                 <a routerLink="/accounts" class="text-sm text-primary" style="text-decoration: none;">View All</a>
             </div>
             <div>
@@ -81,17 +119,28 @@
                     <div *ngFor="let account of recentAccounts" class="p-4 border-b last:border-b-0 hover:bg-gray-50">
                         <div class="flex justify-between">
                             <div>
-                                <div class="font-medium">{{ account.numeroCompte }}</div>
-                                <div class="text-sm text-gray-500">{{ account.typeCompte }}</div>
+                                <div class="font-medium font-mono">{{ account.numeroCompte }}</div>
+                                <div class="text-sm text-gray-500 flex items-center gap-1">
+                                    <i class="ri-wallet-3-line"></i>
+                                    {{ account.typeCompte }}
+                                    <span *ngIf="account.actif" class="badge badge-success ml-2">Active</span>
+                                    <span *ngIf="!account.actif" class="badge badge-danger ml-2">Inactive</span>
+                                </div>
                             </div>
-                            <div class="font-bold font-mono">
+                            <div class="font-bold font-mono text-right">
                                 {{ account.solde | currency:'XOF':'symbol':'1.0-0' }}
                             </div>
                         </div>
                     </div>
                 </div>
                 <div *ngIf="!isLoading && recentAccounts.length === 0" class="p-6 text-center text-gray-500">
-                    No accounts yet.
+                    <div style="font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.5;">
+                        <i class="ri-bank-card-2-line"></i>
+                    </div>
+                    <p class="mb-2">No accounts yet.</p>
+                    <a routerLink="/accounts/new" class="text-primary font-medium">
+                        <i class="ri-add-line"></i> Open first account
+                    </a>
                 </div>
             </div>
         </div>

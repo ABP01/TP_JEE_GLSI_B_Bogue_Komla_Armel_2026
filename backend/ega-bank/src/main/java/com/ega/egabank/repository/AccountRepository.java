@@ -1,5 +1,6 @@
 package com.ega.egabank.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,4 +38,13 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Query("SELECT COUNT(a) FROM Account a WHERE a.proprietaire.id = :clientId")
     long countByClientId(@Param("clientId") Long clientId);
+
+    // Méthodes pour les statistiques du dashboard
+    long countByActifTrue();
+
+    @Query("SELECT COALESCE(SUM(a.solde), 0) FROM Account a")
+    BigDecimal sumAllBalances();
+
+    @Query("SELECT COALESCE(SUM(a.solde), 0) FROM Account a WHERE a.actif = true")
+    BigDecimal sumActiveBalances();
 }
