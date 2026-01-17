@@ -129,6 +129,17 @@ import { AuthService } from '../services/auth.service';
     </div>
   `,
   styles: [`
+    :host {
+      display: block;
+      margin: -1rem -1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      :host {
+        margin: -1.5rem;
+      }
+    }
+
     .auth-page {
       min-height: 100vh;
       display: grid;
