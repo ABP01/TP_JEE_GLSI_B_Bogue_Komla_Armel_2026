@@ -1,134 +1,146 @@
-<div class="p-6">
-    <div class="mb-6 flex justify-between items-center animate-slide-in">
-        <div>
-            <h1 class="text-2xl font-bold mb-2">Transaction History</h1>
-            <p class="text-gray-500">
-                {{ accountId ? 'Transactions for account ' + accountId : 'All transactions across all accounts' }}
+<div class="page-container">
+    <!-- Page Header -->
+    <header class="page-header animate-slide-in">
+        <div class="header-content">
+            <h1 class="page-title">Historique des Transactions</h1>
+            <p class="page-subtitle">
+                {{ accountId ? 'Transactions du compte ' + accountId : 'Toutes les transactions bancaires' }}
             </p>
         </div>
-        <div class="flex gap-2">
+        <div class="header-actions">
             <a *ngIf="accountId" routerLink="/transactions" class="btn btn-secondary">
-                <i class="ri-list-check mr-2"></i> View All
+                <i class="ri-list-check"></i> Voir tout
             </a>
             <a [routerLink]="['/transactions/new']" [queryParams]="accountId ? {accountId: accountId} : {}"
                 class="btn btn-primary">
-                <i class="ri-add-line mr-2"></i> New Transaction
+                <i class="ri-add-line"></i> Nouvelle Transaction
             </a>
         </div>
-    </div>
+    </header>
 
-    <!-- Loading State (Skeleton) -->
+    <!-- Loading State -->
     <div *ngIf="isLoading" class="animate-slide-in">
         <!-- Account Summary Skeleton -->
-        <div class="grid-features mb-6">
-            <div *ngFor="let i of [1,2,3,4]" class="card p-4">
-                <div class="skeleton skeleton-text w-1/2 mb-2"></div>
-                <div class="skeleton skeleton-text h-8 w-3/4"></div>
+        <div class="stats-grid mb-6" *ngIf="accountId">
+            <div *ngFor="let i of [1,2,3,4]" class="stat-card">
+                <div class="skeleton skeleton-text mb-2" style="width: 40%;"></div>
+                <div class="skeleton" style="height: 2rem; width: 60%;"></div>
             </div>
         </div>
 
         <!-- Transactions List Skeleton -->
         <div class="card overflow-hidden">
-            <div *ngFor="let i of [1,2,3,4,5]" class="p-4 border-b flex justify-between items-center">
-                <div class="w-3/5">
-                    <div class="skeleton skeleton-text w-2/5 mb-1"></div>
-                    <div class="skeleton skeleton-text w-3/4"></div>
+            <div class="card-header">
+                <div class="skeleton skeleton-text" style="width: 150px;"></div>
+            </div>
+            <div *ngFor="let i of [1,2,3,4,5]" class="transaction-skeleton">
+                <div class="skeleton" style="width: 48px; height: 48px; border-radius: 12px;"></div>
+                <div class="flex-1">
+                    <div class="skeleton skeleton-text mb-2" style="width: 40%;"></div>
+                    <div class="skeleton skeleton-text" style="width: 60%; height: 0.7rem;"></div>
                 </div>
-                <div class="w-1/6">
-                    <div class="skeleton skeleton-text h-6 mb-1"></div>
-                    <div class="skeleton skeleton-text w-1/2 ml-auto"></div>
-                </div>
+                <div class="skeleton" style="width: 100px; height: 1.5rem;"></div>
             </div>
         </div>
     </div>
 
     <!-- Error State -->
-    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger mb-4 animate-slide-in">
-        <i class="ri-error-warning-line"></i> {{ errorMessage }}
-        <a *ngIf="!accountId" routerLink="/accounts" class="btn btn-sm btn-secondary ml-2">
-            <i class="ri-bank-card-line mr-1"></i> Select Account
+    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger mb-6 animate-slide-in">
+        <i class="ri-error-warning-line text-xl"></i>
+        <div class="flex-1">
+            <div class="font-semibold">Erreur</div>
+            <div class="text-sm opacity-80">{{ errorMessage }}</div>
+        </div>
+        <a *ngIf="!accountId" routerLink="/accounts" class="btn btn-secondary btn-sm">
+            <i class="ri-wallet-3-line"></i> Sélectionner un compte
         </a>
     </div>
 
     <!-- Account Summary -->
-    <div *ngIf="selectedAccount && !isLoading" class="grid-features mb-6 animate-slide-in">
-        <div class="card p-4">
-            <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1 font-bold">
-                <i class="ri-money-dollar-circle-line"></i> Current Balance
+    <div *ngIf="selectedAccount && !isLoading" class="stats-grid mb-6 animate-slide-in">
+        <div class="stat-card highlight">
+            <div class="stat-icon">
+                <i class="ri-money-dollar-circle-line"></i>
             </div>
-            <div class="font-bold text-2xl tracking-tight" [class.text-success]="selectedAccount.solde > 0"
-                [class.text-danger]="selectedAccount.solde <= 0">
-                {{ selectedAccount.solde | currency:'XOF':'symbol':'1.0-0' }}
+            <div class="stat-info">
+                <span class="stat-label">Solde actuel</span>
+                <span class="stat-value" [class.positive]="selectedAccount.solde > 0"
+                    [class.negative]="selectedAccount.solde <= 0">
+                    {{ selectedAccount.solde | number:'1.0-0' }} FCFA
+                </span>
             </div>
         </div>
-        <div class="card p-4">
-            <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1 font-bold">
-                <i class="ri-wallet-3-line"></i> Account Type
+        <div class="stat-card">
+            <div class="stat-icon purple">
+                <i class="ri-wallet-3-line"></i>
             </div>
-            <div class="font-bold text-xl text-gray-800">{{ getAccountTypeDisplay(selectedAccount.typeCompte) }}</div>
+            <div class="stat-info">
+                <span class="stat-label">Type de compte</span>
+                <span class="stat-value">{{ getAccountTypeDisplay(selectedAccount.typeCompte) }}</span>
+            </div>
         </div>
-        <div class="card p-4">
-            <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1 font-bold">
-                <i class="ri-bank-card-line"></i> Account Number
+        <div class="stat-card">
+            <div class="stat-icon cyan">
+                <i class="ri-bank-card-line"></i>
             </div>
-            <div class="font-bold text-lg font-mono text-gray-800">{{ selectedAccount.numeroCompte }}</div>
+            <div class="stat-info">
+                <span class="stat-label">Numéro de compte</span>
+                <span class="stat-value mono">{{ selectedAccount.numeroCompte }}</span>
+            </div>
         </div>
-        <div class="card p-4">
-            <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1 font-bold">
-                <i class="ri-exchange-dollar-line"></i> Transactions
+        <div class="stat-card">
+            <div class="stat-icon orange">
+                <i class="ri-exchange-funds-line"></i>
             </div>
-            <div class="font-bold text-xl text-gray-800">{{ transactions.length }}</div>
+            <div class="stat-info">
+                <span class="stat-label">Transactions</span>
+                <span class="stat-value">{{ transactions.length }}</span>
+            </div>
         </div>
     </div>
 
     <!-- Transactions List -->
     <div *ngIf="!isLoading && transactions.length > 0" class="card overflow-hidden animate-slide-in">
-        <div class="p-4 border-b bg-gray-50 flex justify-between items-center">
-            <h3 class="font-bold flex items-center gap-2 text-gray-800">
-                <i class="ri-history-line text-primary"></i>
-                {{ accountId ? 'Account Transactions' : 'All Transactions' }}
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="ri-history-line"></i>
+                {{ accountId ? 'Transactions du compte' : 'Toutes les transactions' }}
             </h3>
-            <span class="badge badge-neutral">{{ transactions.length }}</span>
+            <span class="transaction-count">{{ transactions.length }}</span>
         </div>
-        <div *ngFor="let txn of transactions"
-            class="transaction-item p-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors flex justify-between items-center group">
-            <div class="flex items-center gap-4">
-                <!-- Transaction Icon -->
-                <div class="w-10 h-10 rounded-full flex items-center justify-center transition-transform group-hover:scale-110"
-                    [class.bg-green-100]="txn.type === 'DEPOT' || txn.type === 'VIREMENT_ENTRANT'"
-                    [class.text-success]="txn.type === 'DEPOT' || txn.type === 'VIREMENT_ENTRANT'"
-                    [class.bg-red-100]="txn.type === 'RETRAIT' || txn.type === 'VIREMENT_SORTANT'"
-                    [class.text-danger]="txn.type === 'RETRAIT' || txn.type === 'VIREMENT_SORTANT'">
+
+        <div class="transactions-list">
+            <div *ngFor="let txn of transactions" class="transaction-item">
+                <div class="txn-icon" [class.deposit]="txn.type === 'DEPOT' || txn.type === 'VIREMENT_ENTRANT'"
+                    [class.withdrawal]="txn.type === 'RETRAIT' || txn.type === 'VIREMENT_SORTANT'">
                     <i [class]="getTypeIcon(txn.type)"></i>
                 </div>
-                <div>
-                    <div class="font-medium flex items-center gap-2 text-gray-900">
+
+                <div class="txn-info">
+                    <div class="txn-title">
                         {{ getTypeDisplay(txn.type) }}
-                        <!-- Afficher le numéro de compte si on affiche toutes les transactions -->
-                        <span *ngIf="!accountId && txn.numeroCompte"
-                            class="text-xs font-mono bg-gray-100 px-2 py-0.5 rounded text-gray-600">
+                        <span *ngIf="!accountId && txn.numeroCompte" class="txn-account">
                             {{ txn.numeroCompte }}
                         </span>
                     </div>
-                    <div class="text-sm text-gray-500 flex items-center gap-3 mt-0.5">
-                        <span *ngIf="txn.description" class="font-medium text-gray-600">{{ txn.description }}</span>
-                        <span class="flex items-center gap-1 text-xs">
-                            <i class="ri-time-line"></i> {{ txn.dateTransaction | date:'medium' }}
+                    <div class="txn-meta">
+                        <span *ngIf="txn.description" class="txn-desc">{{ txn.description }}</span>
+                        <span class="txn-date">
+                            <i class="ri-time-line"></i> {{ txn.dateTransaction | date:'dd MMM yyyy, HH:mm' }}
                         </span>
-                        <span *ngIf="txn.compteDestination"
-                            class="flex items-center gap-1 bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">
-                            <i class="ri-arrow-right-line text-gray-400"></i> <span class="font-mono">{{
-                                txn.compteDestination }}</span>
+                        <span *ngIf="txn.compteDestination" class="txn-dest">
+                            <i class="ri-arrow-right-line"></i> {{ txn.compteDestination }}
                         </span>
                     </div>
                 </div>
-            </div>
-            <div class="text-right">
-                <div class="font-mono font-bold text-lg" [ngClass]="getTxnAmountClass(txn.type)">
-                    {{ getTxnSign(txn.type) }}{{ txn.montant | currency:'XOF':'symbol':'1.0-0' }}
-                </div>
-                <div *ngIf="txn.soldeApres !== undefined" class="text-xs text-gray-400 mt-1 font-mono">
-                    Bal: {{ txn.soldeApres | currency:'XOF':'symbol':'1.0-0' }}
+
+                <div class="txn-amount-wrapper">
+                    <div class="txn-amount" [ngClass]="getTxnAmountClass(txn.type)">
+                        {{ getTxnSign(txn.type) }}{{ txn.montant | number:'1.0-0' }} FCFA
+                    </div>
+                    <div *ngIf="txn.soldeApres !== undefined" class="txn-balance">
+                        Solde: {{ txn.soldeApres | number:'1.0-0' }} FCFA
+                    </div>
                 </div>
             </div>
         </div>
@@ -136,27 +148,493 @@
 
     <!-- Empty State - With Account -->
     <div *ngIf="!isLoading && transactions.length === 0 && !errorMessage && accountId"
-        class="card p-12 text-center animate-slide-in">
-        <div class="text-6xl text-gray-200 mb-4 scale-in-center">
-            <i class="ri-exchange-dollar-line"></i>
+        class="empty-state-card animate-slide-in">
+        <div class="empty-state-content">
+            <div class="empty-state-illustration">
+                <div class="empty-icon-wrapper">
+                    <i class="ri-exchange-funds-line"></i>
+                </div>
+                <div class="empty-decoration"></div>
+            </div>
+
+            <h2 class="empty-title">Aucune transaction</h2>
+            <p class="empty-description">
+                Ce compte n'a pas encore d'historique de transactions.<br>
+                Effectuez votre première opération dès maintenant.
+            </p>
+
+            <a [routerLink]="['/transactions/new']" [queryParams]="{accountId: accountId}"
+                class="btn btn-primary btn-lg">
+                <i class="ri-add-line"></i> Effectuer une transaction
+            </a>
+
+            <div class="empty-features">
+                <div class="empty-feature">
+                    <i class="ri-arrow-down-circle-line"></i>
+                    <span>Dépôts</span>
+                </div>
+                <div class="empty-feature">
+                    <i class="ri-arrow-up-circle-line"></i>
+                    <span>Retraits</span>
+                </div>
+                <div class="empty-feature">
+                    <i class="ri-swap-line"></i>
+                    <span>Virements</span>
+                </div>
+            </div>
         </div>
-        <h3 class="font-bold text-lg mb-2 text-gray-700">No Transactions Yet</h3>
-        <p class="text-gray-500 mb-6">This account has no transaction history.</p>
-        <a [routerLink]="['/transactions/new']" [queryParams]="{accountId: accountId}" class="btn btn-primary">
-            <i class="ri-add-line mr-2"></i> Make First Transaction
-        </a>
     </div>
 
     <!-- Empty State - All Transactions -->
     <div *ngIf="!isLoading && transactions.length === 0 && !errorMessage && !accountId"
-        class="card p-12 text-center animate-slide-in">
-        <div class="text-6xl text-gray-200 mb-4 scale-in-center">
-            <i class="ri-exchange-dollar-line"></i>
+        class="empty-state-card animate-slide-in">
+        <div class="empty-state-content">
+            <div class="empty-state-illustration">
+                <div class="empty-icon-wrapper">
+                    <i class="ri-history-line"></i>
+                </div>
+                <div class="empty-decoration"></div>
+            </div>
+
+            <h2 class="empty-title">Aucune transaction enregistrée</h2>
+            <p class="empty-description">
+                Le système n'a pas encore enregistré de transactions.<br>
+                Sélectionnez un compte pour effectuer votre première opération.
+            </p>
+
+            <div class="empty-actions">
+                <a routerLink="/accounts" class="btn btn-secondary">
+                    <i class="ri-wallet-3-line"></i> Voir les comptes
+                </a>
+                <a routerLink="/transactions/new" class="btn btn-primary">
+                    <i class="ri-add-line"></i> Nouvelle transaction
+                </a>
+            </div>
         </div>
-        <h3 class="font-bold text-lg mb-2 text-gray-700">No Transactions Yet</h3>
-        <p class="text-gray-500 mb-6">No transactions have been made in the system yet.</p>
-        <a routerLink="/transactions/new" class="btn btn-primary">
-            <i class="ri-add-line mr-2"></i> Make First Transaction
-        </a>
     </div>
 </div>
+
+<style>
+    .page-container {
+        padding: 1.5rem 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        gap: 1rem;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.025em;
+        margin-bottom: 0.25rem;
+    }
+
+    .page-subtitle {
+        color: #64748b;
+        font-size: 0.9375rem;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+    }
+
+    .stat-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        padding: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .stat-card.highlight {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        border: none;
+    }
+
+    .stat-card.highlight .stat-label {
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .stat-card.highlight .stat-value {
+        color: white !important;
+    }
+
+    .stat-card.highlight .stat-icon {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .stat-icon.purple {
+        background: rgba(139, 92, 246, 0.1);
+        color: #8b5cf6;
+    }
+
+    .stat-icon.cyan {
+        background: rgba(6, 182, 212, 0.1);
+        color: #06b6d4;
+    }
+
+    .stat-icon.orange {
+        background: rgba(249, 115, 22, 0.1);
+        color: #f97316;
+    }
+
+    .stat-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .stat-value.positive {
+        color: #059669;
+    }
+
+    .stat-value.negative {
+        color: #dc2626;
+    }
+
+    .stat-value.mono {
+        font-family: 'SF Mono', Monaco, monospace;
+        font-size: 1rem;
+        letter-spacing: -0.02em;
+    }
+
+    /* Card */
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #f1f5f9;
+        background: #f8fafc;
+    }
+
+    .card-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    .card-title i {
+        color: #3b82f6;
+    }
+
+    .transaction-count {
+        background: #e2e8f0;
+        color: #475569;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.25rem 0.625rem;
+        border-radius: 20px;
+    }
+
+    /* Transactions List */
+    .transactions-list {
+        max-height: 600px;
+        overflow-y: auto;
+    }
+
+    .transaction-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #f1f5f9;
+        transition: background 0.15s;
+    }
+
+    .transaction-item:hover {
+        background: #f8fafc;
+    }
+
+    .transaction-item:last-child {
+        border-bottom: none;
+    }
+
+    .txn-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+        transition: transform 0.2s;
+    }
+
+    .transaction-item:hover .txn-icon {
+        transform: scale(1.05);
+    }
+
+    .txn-icon.deposit {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    .txn-icon.withdrawal {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+
+    .txn-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .txn-title {
+        font-weight: 600;
+        color: #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .txn-account {
+        font-family: 'SF Mono', Monaco, monospace;
+        font-size: 0.7rem;
+        background: #f1f5f9;
+        color: #64748b;
+        padding: 0.125rem 0.5rem;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+
+    .txn-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 0.25rem;
+        font-size: 0.8125rem;
+        color: #64748b;
+        flex-wrap: wrap;
+    }
+
+    .txn-desc {
+        font-weight: 500;
+        color: #475569;
+    }
+
+    .txn-date {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .txn-dest {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        background: #f8fafc;
+        padding: 0.125rem 0.375rem;
+        border-radius: 4px;
+        border: 1px solid #e2e8f0;
+        font-family: 'SF Mono', Monaco, monospace;
+        font-size: 0.75rem;
+    }
+
+    .txn-amount-wrapper {
+        text-align: right;
+    }
+
+    .txn-amount {
+        font-family: 'SF Mono', Monaco, monospace;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+
+    .txn-amount.text-success {
+        color: #059669;
+    }
+
+    .txn-amount.text-danger {
+        color: #dc2626;
+    }
+
+    .txn-balance {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-top: 0.25rem;
+        font-family: 'SF Mono', Monaco, monospace;
+    }
+
+    /* Skeleton */
+    .transaction-skeleton {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    /* Empty State */
+    .empty-state-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 1.5rem;
+        padding: 4rem 2rem;
+        text-align: center;
+    }
+
+    .empty-state-content {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .empty-state-illustration {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 2rem;
+    }
+
+    .empty-icon-wrapper {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: #cbd5e1;
+        position: relative;
+        z-index: 1;
+    }
+
+    .empty-decoration {
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        right: -10px;
+        bottom: -10px;
+        border: 2px dashed #e2e8f0;
+        border-radius: 50%;
+        animation: rotate 30s linear infinite;
+    }
+
+    @keyframes rotate {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.75rem;
+    }
+
+    .empty-description {
+        color: #64748b;
+        font-size: 0.9375rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
+    .empty-actions {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+    }
+
+    .empty-features {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .empty-feature {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        color: #64748b;
+        font-size: 0.8125rem;
+    }
+
+    .empty-feature i {
+        font-size: 1.5rem;
+        color: #3b82f6;
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+        }
+
+        .header-actions {
+            width: 100%;
+        }
+
+        .header-actions .btn {
+            flex: 1;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .empty-features {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .empty-actions {
+            flex-direction: column;
+        }
+    }
+</style>
