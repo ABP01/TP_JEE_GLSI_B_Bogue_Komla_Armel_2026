@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AccountService } from '../services/account.service';
 import { AuthService } from '../services/auth.service';
 import { ClientService } from '../services/client.service';
@@ -9,27 +9,27 @@ import { ClientService } from '../services/client.service';
 @Component({
   standalone: true,
   selector: 'dashboard-header',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   template: `
-    <header style="height:64px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;padding:0 16px;background:white;position:sticky;top:0;z-index:40;">
+    <header class="dashboard-header glass">
       <!-- Spacer to center search -->
-      <div style="flex:1;"></div>
+      <div class="flex-1"></div>
 
       <!-- Centered Search -->
-      <div style="max-width:480px;width:100%;position:relative;">
-        <div style="position:relative;">
+      <div class="search-container">
+        <div class="relative">
             <input 
                 [(ngModel)]="searchQuery" 
                 (ngModelChange)="onSearch()"
                 placeholder="Search clients or accounts..." 
-                style="width:100%;padding:10px 16px 10px 40px;border-radius:24px;border:1px solid #e5e7eb;background:#f9fafb;outline:none;transition:all 0.2s;"
+                class="search-input"
                 (focus)="showSearch = true"
             />
-            <i class="ri-search-line" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:1.1rem;"></i>
+            <i class="ri-search-line search-icon"></i>
         </div>
 
         <!-- Search Results Dropdown -->
-        <div *ngIf="showSearch && searchQuery.length > 1" class="search-results">
+        <div *ngIf="showSearch && searchQuery.length > 1" class="search-results animate-slide-in">
             <div *ngIf="isSearching" class="p-4 text-center text-gray-400 text-sm">
                 <i class="ri-loader-4-line spinner-icon"></i> Searching...
             </div>
@@ -37,13 +37,13 @@ import { ClientService } from '../services/client.service';
             <div *ngIf="!isSearching">
                 <!-- Clients -->
                 <div *ngIf="foundClients.length > 0">
-                    <div class="px-3 py-2 text-xs font-bold text-gray-500 uppercase bg-gray-50">Clients</div>
-                    <div *ngFor="let client of foundClients" (click)="goToClient(client.id)" class="search-item flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+                    <div class="search-section-title">Clients</div>
+                    <div *ngFor="let client of foundClients" (click)="goToClient(client.id)" class="search-item flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-blue-50 text-primary flex items-center justify-center">
                              <i class="ri-user-line"></i>
                         </div>
                         <div>
-                            <div class="font-medium">{{client.prenom}} {{client.nom}}</div>
+                            <div class="font-medium text-gray-900">{{client.prenom}} {{client.nom}}</div>
                             <div class="text-xs text-gray-500">{{client.courriel}}</div>
                         </div>
                     </div>
@@ -51,19 +51,20 @@ import { ClientService } from '../services/client.service';
 
                 <!-- Accounts -->
                  <div *ngIf="foundAccounts.length > 0">
-                    <div class="px-3 py-2 text-xs font-bold text-gray-500 uppercase bg-gray-50">Accounts</div>
-                    <div *ngFor="let account of foundAccounts" (click)="goToAccount(account.numeroCompte)" class="search-item flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+                    <div class="search-section-title">Accounts</div>
+                    <div *ngFor="let account of foundAccounts" (click)="goToAccount(account.numeroCompte)" class="search-item flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-green-50 text-success flex items-center justify-center">
                              <i class="ri-bank-card-line"></i>
                         </div>
                         <div>
-                            <div class="font-medium">{{account.numeroCompte}}</div>
+                            <div class="font-medium font-mono text-gray-900">{{account.numeroCompte}}</div>
                             <div class="text-xs text-gray-500">{{account.typeCompte}} • {{account.solde | currency:'XOF':'symbol':'1.0-0'}}</div>
                         </div>
                     </div>
                 </div>
 
-                <div *ngIf="foundClients.length === 0 && foundAccounts.length === 0" class="p-4 text-center text-gray-500 text-sm">
+                <div *ngIf="foundClients.length === 0 && foundAccounts.length === 0" class="p-8 text-center text-gray-400 text-sm">
+                    <i class="ri-search-line text-2xl mb-2 block opacity-50"></i>
                     No results found.
                 </div>
             </div>
@@ -71,20 +72,20 @@ import { ClientService } from '../services/client.service';
       </div>
 
       <!-- Right Actions -->
-      <div style="flex:1;display:flex;justify-content:flex-end;align-items:center;gap:12px;">
+      <div class="header-actions">
         <!-- Notifications -->
-        <div style="position:relative;">
-            <button (click)="toggleNotifications()" class="header-icon-btn">
+        <div class="relative">
+            <button (click)="toggleNotifications()" class="header-icon-btn" [class.active]="showNotifications">
                 <i class="ri-notification-3-line"></i>
                 <span *ngIf="unreadNotifications" class="notification-badge">
                     <span class="notification-count">2</span>
                 </span>
             </button>
             
-            <div *ngIf="showNotifications" class="dropdown-menu notification-dropdown">
+            <div *ngIf="showNotifications" class="dropdown-menu notification-dropdown animate-slide-in">
                 <div class="dropdown-header">
                     <span>Notifications</span>
-                    <a class="mark-read-link">Tout marquer lu</a>
+                    <a class="mark-read-link">Mark all read</a>
                 </div>
                 
                 <div class="notification-list">
@@ -93,8 +94,8 @@ import { ClientService } from '../services/client.service';
                             <i class="ri-bank-card-line"></i>
                         </div>
                         <div class="notif-body">
-                            <p class="notif-text"><strong>Nouveau virement reçu</strong> de 150 000 XOF sur le compte EGA-2024-001</p>
-                            <span class="notif-time">Il y a 25 min</span>
+                            <p class="notif-text"><strong>Transfer received</strong> 150 000 XOF to account ending 001</p>
+                            <span class="notif-time">25 min ago</span>
                         </div>
                     </div>
                     
@@ -103,8 +104,8 @@ import { ClientService } from '../services/client.service';
                             <i class="ri-user-add-line"></i>
                         </div>
                         <div class="notif-body">
-                            <p class="notif-text"><strong>Nouveau client</strong> Jean Dupont ajouté avec succès</p>
-                            <span class="notif-time">Il y a 2h</span>
+                            <p class="notif-text"><strong>New client</strong> Jean Dupont added successfully</p>
+                            <span class="notif-time">2 hours ago</span>
                         </div>
                     </div>
                     
@@ -113,23 +114,23 @@ import { ClientService } from '../services/client.service';
                             <i class="ri-exchange-funds-line"></i>
                         </div>
                         <div class="notif-body">
-                            <p class="notif-text">Transaction #TRX-4521 effectuée - Retrait de 75 000 XOF</p>
-                            <span class="notif-time">Hier, 14:30</span>
+                            <p class="notif-text">Transaction #TRX-4521 completed - Withdrawal</p>
+                            <span class="notif-time">Yesterday</span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="dropdown-footer">
-                    <a class="see-all-link" routerLink="/notifications">Voir toutes les notifications</a>
+                    <a class="see-all-link" routerLink="/notifications">View all notifications</a>
                 </div>
             </div>
         </div>
 
         <!-- User Profile -->
-        <div style="position:relative;">
-           <button (click)="toggleProfile()" class="profile-btn">
+        <div class="relative">
+           <button (click)="toggleProfile()" class="profile-btn" [class.active]="showProfile">
              <div class="profile-avatar">
-               <i class="ri-user-3-line"></i>
+               <span class="font-bold">A</span>
              </div>
              <div class="profile-info">
                <span class="profile-name">Admin</span>
@@ -137,12 +138,12 @@ import { ClientService } from '../services/client.service';
              </div>
            </button>
 
-           <div *ngIf="showProfile" class="dropdown-menu profile-dropdown">
+           <div *ngIf="showProfile" class="dropdown-menu profile-dropdown animate-slide-in">
                <div class="profile-menu-header">
                    <div class="user-avatar-lg">A</div>
                    <div class="user-details">
                        <span class="user-fullname">Administrateur</span>
-                       <span class="user-email">admin&#64;egabank.com</span>
+                       <span class="user-email">admin@egabank.com</span>
                    </div>
                </div>
                
@@ -177,7 +178,7 @@ import { ClientService } from '../services/client.service';
     </header>
     
     <!-- Click overlay to close dropdowns -->
-    <div *ngIf="showSearch || showNotifications || showProfile" (click)="closeAll()" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:30;"></div>
+    <div *ngIf="showSearch || showNotifications || showProfile" (click)="closeAll()" class="fixed inset-0 z-30"></div>
   `,
   styles: [`
     .search-results {
@@ -186,20 +187,33 @@ import { ClientService } from '../services/client.service';
         left: 0;
         right: 0;
         background: white;
-        border: 1px solid #e5e7eb;
+        border: 1px solid var(--gray-200);
         border-radius: 12px;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-lg);
         z-index: 50;
         margin-top: 8px;
         overflow: hidden;
+    }
+    .search-section-title {
+        padding: 8px 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--gray-500);
+        text-transform: uppercase;
+        background-color: var(--gray-50);
+        letter-spacing: 0.05em;
     }
     .search-item {
         padding: 10px 16px;
         cursor: pointer;
         transition: background-color 0.2s;
+        border-bottom: 1px solid var(--gray-50);
+    }
+    .search-item:last-child {
+        border-bottom: none;
     }
     .search-item:hover {
-        background-color: #f9fafb;
+        background-color: var(--gray-50);
     }
     
     /* Header Icon Button */
@@ -218,9 +232,13 @@ import { ClientService } from '../services/client.service';
       color: var(--gray-500);
       transition: all 0.15s ease;
     }
-    .header-icon-btn:hover {
+    .header-icon-btn:hover, .header-icon-btn.active {
       background: var(--gray-100);
       color: var(--gray-800);
+    }
+    .header-icon-btn.active {
+        background: var(--primary-light);
+        color: var(--primary);
     }
     
     /* Notification Badge */
@@ -255,7 +273,7 @@ import { ClientService } from '../services/client.service';
       gap: 8px;
       transition: all 0.15s ease;
     }
-    .profile-btn:hover {
+    .profile-btn:hover, .profile-btn.active {
       background: var(--gray-50);
       border-color: var(--gray-300);
     }
@@ -293,18 +311,19 @@ import { ClientService } from '../services/client.service';
     .dropdown-menu {
       position: absolute;
       background: white;
-      border-radius: var(--radius-lg);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+      border-radius: 12px;
+      box-shadow: var(--shadow-xl);
       border: 1px solid var(--gray-200);
       z-index: 100;
       overflow: hidden;
+      transform-origin: top right;
     }
     
     /* Notification Dropdown */
     .notification-dropdown {
       width: 340px;
       right: 0;
-      top: calc(100% + 6px);
+      top: calc(100% + 8px);
     }
     .dropdown-header {
       display: flex;
@@ -347,10 +366,10 @@ import { ClientService } from '../services/client.service';
       background: var(--gray-50);
     }
     .notification-item.unread {
-      background: oklch(95% 0.02 263);
+      background: var(--primary-light);
     }
     .notification-item.unread:hover {
-      background: oklch(92% 0.03 263);
+      background: #edebfe; /* Slightly darker than primary-light */
     }
     .notif-icon {
       width: 36px;
@@ -363,15 +382,15 @@ import { ClientService } from '../services/client.service';
       font-size: 1rem;
     }
     .notif-icon.primary {
-      background: oklch(92% 0.05 263);
+      background: var(--primary-light);
       color: var(--primary);
     }
     .notif-icon.accent {
-      background: oklch(92% 0.05 332);
+      background: #fdf2f8;
       color: var(--accent);
     }
     .notif-icon.secondary {
-      background: oklch(92% 0.05 296);
+      background: #fdf4ff;
       color: var(--secondary);
     }
     .notif-body {
@@ -391,6 +410,7 @@ import { ClientService } from '../services/client.service';
       font-size: 0.7rem;
       color: var(--gray-400);
       margin-top: 4px;
+      display: block;
     }
     
     /* Dropdown Footer */
@@ -411,9 +431,9 @@ import { ClientService } from '../services/client.service';
     
     /* Profile Dropdown */
     .profile-dropdown {
-      width: 220px;
+      width: 240px;
       right: 0;
-      top: calc(100% + 6px);
+      top: calc(100% + 8px);
     }
     .profile-menu-header {
       display: flex;
@@ -437,15 +457,22 @@ import { ClientService } from '../services/client.service';
     .user-details {
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
     .user-fullname {
       font-weight: 600;
       font-size: 0.9rem;
       color: var(--gray-800);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .user-email {
       font-size: 0.75rem;
       color: var(--gray-500);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     
     /* Menu Items */
@@ -457,18 +484,23 @@ import { ClientService } from '../services/client.service';
       align-items: center;
       gap: 10px;
       padding: 10px 12px;
-      border-radius: var(--radius-md);
+      border-radius: 6px;
       cursor: pointer;
       transition: background 0.15s;
       font-size: 0.85rem;
       color: var(--gray-700);
+      text-decoration: none;
     }
     .menu-item:hover {
-      background: var(--gray-100);
+      background: var(--gray-50);
+      color: var(--gray-900);
     }
     .menu-item i {
       font-size: 1.1rem;
       color: var(--gray-500);
+    }
+    .menu-item:hover i {
+      color: var(--gray-700);
     }
     .menu-item.logout {
       color: var(--danger);
@@ -477,11 +509,11 @@ import { ClientService } from '../services/client.service';
       color: var(--danger);
     }
     .menu-item.logout:hover {
-      background: oklch(95% 0.03 15);
+      background: #fef2f2;
     }
     
     /* Menu Divider */
-    .menu-divider {
+    .dropdown-divider, .menu-divider {
       height: 1px;
       background: var(--gray-100);
       margin: 4px 0;

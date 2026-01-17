@@ -10,66 +10,92 @@ import { AuthService } from '../services/auth.service';
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
     <div class="login-layout">
-      <div class="card login-card">
+        <div class="background-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+        </div>
+        
+      <div class="card login-card glass-panel animate-slide-in">
         <div class="header">
-          <div class="mb-6 flex justify-center">
-            <img src="/assets/logoega.png" alt="EGA Bank" width="120" height="48" style="height: 48px; width: auto;" />
+          <div class="mb-8 flex justify-center">
+            <div class="logo-container">
+                <img src="/assets/logoega.png" alt="EGA Bank" width="120" style="height: 48px; width: auto; filter: brightness(0) invert(1);" />
+            </div>
           </div>
-          <h2 class="text-2xl font-bold mb-2 text-center">Welcome Back</h2>
-          <p class="text-gray-500 text-sm text-center">Sign in to access your account</p>
+          <h2 class="text-3xl font-bold mb-2 text-center text-gray-900 tracking-tight">Welcome Back</h2>
+          <p class="text-gray-500 text-center mb-8">Sign in to access your secure banking dashboard</p>
         </div>
 
         <!-- Message de session expirée -->
-        <div *ngIf="sessionExpired" class="alert alert-warning">
-          <i class="ri-lock-line"></i> Your session has expired. Please sign in again.
+        <div *ngIf="sessionExpired" class="alert alert-warning mb-6">
+          <i class="ri-lock-line text-lg"></i> 
+          <span>Your session has expired. Please sign in again.</span>
         </div>
 
-        <div *ngIf="errorMessage" class="alert alert-danger">
-           <i class="ri-error-warning-line"></i> {{ errorMessage }}
+        <div *ngIf="errorMessage" class="alert alert-danger mb-6">
+           <i class="ri-error-warning-line text-lg"></i> 
+           <span>{{ errorMessage }}</span>
         </div>
 
         <form [formGroup]="form" (ngSubmit)="submit()">
-          <div class="mb-4">
+          <div class="mb-5">
             <label for="username" class="label">Username</label>
-            <input 
-              id="username" 
-              type="text" 
-              formControlName="username" 
-              class="input-field w-full"
-              [class.error-border]="form.get('username')?.invalid && form.get('username')?.touched"
-            />
-             <div *ngIf="form.get('username')?.invalid && form.get('username')?.touched" class="text-xs text-danger mt-1">
+            <div class="relative">
+                <i class="ri-user-line input-icon"></i>
+                <input 
+                  id="username" 
+                  type="text" 
+                  formControlName="username" 
+                  class="input-with-icon"
+                  placeholder="Enter your username"
+                  [class.error-border]="form.get('username')?.invalid && form.get('username')?.touched"
+                />
+            </div>
+             <div *ngIf="form.get('username')?.invalid && form.get('username')?.touched" class="text-xs text-danger mt-1 font-medium">
               Username is required
             </div>
           </div>
 
-          <div class="mb-6">
-            <label for="password" class="label">Password</label>
-            <input 
-              id="password" 
-              type="password" 
-              formControlName="password"
-               class="input-field w-full"
-               [class.error-border]="form.get('password')?.invalid && form.get('password')?.touched"
-            />
-            <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="text-xs text-danger mt-1">
+          <div class="mb-8">
+            <div class="flex justify-between items-center mb-1">
+                <label for="password" class="label mb-0">Password</label>
+                <a class="text-xs text-primary font-medium hover:underline cursor-pointer">Forgot password?</a>
+            </div>
+            
+            <div class="relative">
+                <i class="ri-lock-2-line input-icon"></i>
+                <input 
+                  id="password" 
+                  type="password" 
+                  formControlName="password"
+                   class="input-with-icon"
+                   placeholder="Enter your password"
+                   [class.error-border]="form.get('password')?.invalid && form.get('password')?.touched"
+                />
+            </div>
+            <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="text-xs text-danger mt-1 font-medium">
               Password is required
             </div>
           </div>
 
           <button 
             type="submit" 
-            class="btn btn-primary w-full"
+            class="btn btn-primary w-full py-3 text-lg shadow-lg hover:shadow-xl transition-all"
             [disabled]="form.invalid || isLoading"
           >
-            <span *ngIf="isLoading" class="spinner"></span>
-            {{ isLoading ? 'Signing in...' : 'Sign in' }}
+            <span *ngIf="isLoading" class="spinner-border spinner-sm mr-2"></span>
+            <span *ngIf="!isLoading">Sign in</span>
+            <span *ngIf="isLoading">Signing in...</span>
           </button>
         </form>
 
         <div class="footer">
-          Don't have an account? <a routerLink="/register" class="link">Register</a>
+          <p class="text-gray-500">Don't have an account? <a routerLink="/register" class="link">Create an account</a></p>
         </div>
+      </div>
+      
+      <div class="mt-8 text-center text-gray-400 text-xs">
+        &copy; 2024 EGA Bank. Secure Banking System.
       </div>
     </div>
   `,
@@ -77,85 +103,133 @@ import { AuthService } from '../services/auth.service';
     .login-layout {
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 1rem;
-      background-color: var(--gray-50);
+      background-color: #f8fafc;
+      background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+      background-size: 100% 100%;
+      position: relative;
+      overflow: hidden;
     }
+    
+    .background-shapes .shape {
+        position: absolute;
+        filter: blur(80px);
+        z-index: 0;
+        opacity: 0.6;
+    }
+    .shape-1 {
+        top: -10%;
+        left: -10%;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+        animation: float 20s infinite ease-in-out;
+    }
+    .shape-2 {
+        bottom: -10%;
+        right: -10%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
+        animation: float 25s infinite ease-in-out reverse;
+    }
+    
+    @keyframes float {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(30px, 50px) rotate(10deg); }
+        100% { transform: translate(0, 0) rotate(0deg); }
+    }
+
     .login-card {
       width: 100%;
-      max-width: 400px;
-      padding: 2rem;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      max-width: 440px;
+      padding: 3rem 2.5rem;
+      z-index: 10;
+      backdrop-filter: blur(20px);
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.8);
     }
-    .text-center { text-align: center; }
+    
+    .logo-container {
+        width: 80px;
+        height: 80px;
+        background: var(--gray-900);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+    }
+
     .label {
       display: block;
       font-size: 0.875rem;
-      font-weight: 500;
+      font-weight: 600;
       color: var(--gray-700);
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.5rem;
     }
-    .input-field {
-      padding: 0.5rem 0.75rem;
-      border: 1px solid var(--gray-300);
-      border-radius: var(--radius-sm);
+    
+    .relative { position: relative; }
+    
+    .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray-400);
+        font-size: 1.2rem;
+        pointer-events: none;
+        transition: color 0.2s;
+    }
+    
+    .input-with-icon {
+      padding: 0.75rem 1rem 0.75rem 3rem;
+      width: 100%;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
       transition: all 0.2s;
       outline: none;
+      background: var(--white);
+      font-size: 0.95rem;
     }
-    .input-field:focus {
+    
+    .input-with-icon:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary), transparent 85%);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 10%, transparent);
     }
-    .error-border { border-color: var(--danger); }
-    .alert-danger {
-      background-color: #fef2f2;
-      border: 1px solid #fee2e2;
-      color: var(--danger);
-      padding: 0.75rem;
-      border-radius: var(--radius-sm);
-      font-size: 0.875rem;
-      margin-bottom: 1rem;
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
+    
+    .input-with-icon:focus + .input-icon, 
+    .relative:focus-within .input-icon {
+        color: var(--primary);
     }
-    .alert-warning {
-      background-color: #fffbeb;
-      border: 1px solid #fef3c7;
-      color: #b45309;
-      padding: 0.75rem;
-      border-radius: var(--radius-sm);
-      font-size: 0.875rem;
-      margin-bottom: 1rem;
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-    }
+    
+    .error-border { border-color: var(--danger); background-color: #fff5f5; }
+    
     .footer {
-      margin-top: 1.5rem;
+      margin-top: 2rem;
       text-align: center;
-      font-size: 0.875rem;
-      color: var(--gray-500);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--gray-200);
+      padding-top: 1.5rem;
     }
     .link {
       color: var(--primary);
-      font-weight: 500;
+      font-weight: 600;
       text-decoration: none;
+      transition: color 0.2s;
     }
-    .link:hover { text-decoration: underline; }
-    .spinner {
-      display: inline-block;
-      width: 1rem;
-      height: 1rem;
-      margin-right: 0.5rem;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .link:hover { color: var(--primary-hover); text-decoration: underline; }
+    
+    .spinner-border {
+        width: 1.2em;
+        height: 1.2em;
+        border: 0.2em solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: spin .75s linear infinite
     }
   `]
 })

@@ -1,148 +1,239 @@
-<div class="p-6">
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold mb-2">Dashboard</h1>
-        <p class="text-gray-500">Overview of your bank's performance.</p>
-    </div>
+<div class="dashboard-container">
+    <!-- Header -->
+    <header class="dashboard-header animate-slide-in">
+        <div>
+            <h1 class="text-3xl font-bold tracking-tight text-gray-900">Tableau de bord</h1>
+            <p class="text-gray-500 mt-1">Vue d'ensemble des performances de votre banque</p>
+        </div>
+    </header>
 
     <!-- Error State -->
-    <div *ngIf="hasError" class="card p-6 mb-6 border-danger" style="border-left: 4px solid var(--danger);">
-        <div class="flex items-center gap-4">
-            <div class="text-danger" style="font-size: 2rem;">
-                <i class="ri-error-warning-line"></i>
-            </div>
-            <div class="flex-1">
-                <h3 class="font-bold text-danger mb-1">Connection Error</h3>
-                <p class="text-gray-600">{{ errorMessage }}</p>
-            </div>
-            <button (click)="retry()" class="btn btn-primary">
-                <i class="ri-refresh-line" style="margin-right: 0.5rem;"></i> Retry
-            </button>
+    <div *ngIf="hasError" class="alert alert-danger mb-6 animate-fade-in">
+        <i class="ri-error-warning-line text-xl"></i>
+        <div class="flex-1">
+            <div class="font-semibold">Erreur de connexion</div>
+            <div class="text-sm opacity-80">{{ errorMessage }}</div>
         </div>
+        <button (click)="retry()" class="btn btn-secondary btn-sm">
+            <i class="ri-refresh-line"></i> Réessayer
+        </button>
     </div>
 
     <!-- Stats Grid -->
-    <div class="grid-dashboard">
+    <div class="grid-stats mb-8">
         <!-- Total Clients -->
-        <div class="card p-4">
-            <div class="flex items-center gap-2 text-sm text-gray-500 mb-1">
-                <i class="ri-user-line"></i>
-                <span>Total Clients</span>
+        <div class="stat-card animate-slide-in">
+            <div class="stat-icon blue">
+                <i class="ri-user-3-line"></i>
             </div>
-            <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
-            <div *ngIf="!isLoading" class="text-2xl font-bold">{{ stats.totalClients }}</div>
+            <div class="stat-label">Total Clients</div>
+            <div *ngIf="isLoading" class="skeleton" style="height: 2.25rem; width: 60%;"></div>
+            <div *ngIf="!isLoading" class="stat-value">{{ stats.totalClients | number }}</div>
         </div>
 
         <!-- Total Accounts -->
-        <div class="card p-4">
-            <div class="flex items-center gap-2 text-sm text-gray-500 mb-1">
-                <i class="ri-bank-card-line"></i>
-                <span>Total Accounts</span>
+        <div class="stat-card animate-slide-in" style="animation-delay: 0.05s;">
+            <div class="stat-icon purple">
+                <i class="ri-wallet-3-line"></i>
             </div>
-            <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
-            <div *ngIf="!isLoading" class="text-2xl font-bold">{{ stats.totalAccounts }}</div>
+            <div class="stat-label">Total Comptes</div>
+            <div *ngIf="isLoading" class="skeleton" style="height: 2.25rem; width: 60%;"></div>
+            <div *ngIf="!isLoading" class="stat-value">{{ stats.totalAccounts | number }}</div>
         </div>
 
         <!-- Active Accounts -->
-        <div class="card p-4">
-            <div class="flex items-center gap-2 text-sm text-gray-500 mb-1">
+        <div class="stat-card animate-slide-in" style="animation-delay: 0.1s;">
+            <div class="stat-icon green">
                 <i class="ri-checkbox-circle-line"></i>
-                <span>Active Accounts</span>
             </div>
-            <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
-            <div *ngIf="!isLoading" class="text-2xl font-bold text-success">{{ stats.activeAccounts }}</div>
+            <div class="stat-label">Comptes Actifs</div>
+            <div *ngIf="isLoading" class="skeleton" style="height: 2.25rem; width: 60%;"></div>
+            <div *ngIf="!isLoading" class="stat-value">{{ stats.activeAccounts | number }}</div>
         </div>
 
         <!-- Total Balance -->
-        <div class="card p-4">
-            <div class="flex items-center gap-2 text-sm text-gray-500 mb-1">
+        <div class="stat-card primary animate-slide-in" style="animation-delay: 0.15s;">
+            <div class="stat-icon">
                 <i class="ri-money-dollar-circle-line"></i>
-                <span>Total Balance</span>
             </div>
-            <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
-            <div *ngIf="!isLoading" class="text-2xl font-bold text-primary">{{ stats.totalBalance |
-                currency:'XOF':'symbol':'1.0-0' }}</div>
+            <div class="stat-label">Solde Total</div>
+            <div *ngIf="isLoading" class="skeleton"
+                style="height: 2.25rem; width: 80%; background: rgba(255,255,255,0.2);"></div>
+            <div *ngIf="!isLoading" class="stat-value">{{ stats.totalBalance | number:'1.0-0' }} FCFA</div>
         </div>
     </div>
 
-    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
-        <!-- Recent Clients -->
-        <div class="card overflow-hidden">
-            <div class="p-4 border-b flex justify-between items-center">
-                <h3 class="font-bold flex items-center gap-2">
-                    <i class="ri-user-line text-primary"></i>
-                    Recent Clients
-                </h3>
-                <a routerLink="/clients" class="text-sm text-primary" style="text-decoration: none;">View All</a>
+    <!-- Content Grid -->
+    <div class="content-grid">
+        <!-- Recent Clients Card -->
+        <div class="card animate-slide-in" style="animation-delay: 0.2s;">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="ri-user-3-line text-primary"></i>
+                    Clients Récents
+                </h2>
+                <a routerLink="/clients" class="btn btn-secondary btn-sm">
+                    Voir tout
+                    <i class="ri-arrow-right-s-line"></i>
+                </a>
             </div>
-            <div>
+
+            <div class="card-body">
+                <!-- Loading State -->
                 <div *ngIf="isLoading">
-                    <div *ngFor="let i of [1,2,3]" class="p-4 border-b">
-                        <div class="skeleton skeleton-text mb-2" style="width: 50%;"></div>
-                        <div class="skeleton skeleton-text" style="width: 30%;"></div>
+                    <div *ngFor="let i of [1,2,3]" class="list-item">
+                        <div class="skeleton skeleton-circle" style="width: 44px; height: 44px;"></div>
+                        <div class="flex-1">
+                            <div class="skeleton skeleton-text mb-2" style="width: 50%;"></div>
+                            <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem;"></div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Data State -->
                 <div *ngIf="!isLoading && recentClients.length > 0">
-                    <div *ngFor="let client of recentClients" class="p-4 border-b last:border-b-0 hover:bg-gray-50">
-                        <div class="font-medium">{{ client.prenom }} {{ client.nom }}</div>
-                        <div class="text-sm text-gray-500">{{ client.courriel || 'No email' }}</div>
+                    <div *ngFor="let client of recentClients" class="list-item">
+                        <div class="avatar">
+                            {{ client.prenom.charAt(0) }}{{ client.nom.charAt(0) }}
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900">{{ client.prenom }} {{ client.nom }}</div>
+                            <div class="text-sm text-gray-500">{{ client.courriel || 'Pas d\'email' }}</div>
+                        </div>
+                        <div class="text-xs text-gray-400">
+                            {{ client.createdAt | date:'dd MMM yyyy' }}
+                        </div>
                     </div>
                 </div>
-                <div *ngIf="!isLoading && recentClients.length === 0" class="p-6 text-center text-gray-500">
-                    <div style="font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.5;">
-                        <i class="ri-user-add-line"></i>
+
+                <!-- Empty State -->
+                <div *ngIf="!isLoading && recentClients.length === 0" class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="ri-user-3-line"></i>
                     </div>
-                    <p class="mb-2">No clients yet.</p>
-                    <a routerLink="/clients/new" class="text-primary font-medium">
-                        <i class="ri-add-line"></i> Add your first client
+                    <div class="empty-state-title">Aucun client</div>
+                    <div class="empty-state-text">Commencez par ajouter votre premier client.</div>
+                    <a routerLink="/clients/new" class="btn btn-primary">
+                        <i class="ri-add-line"></i> Ajouter un client
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- Recent Accounts -->
-        <div class="card overflow-hidden">
-            <div class="p-4 border-b flex justify-between items-center">
-                <h3 class="font-bold flex items-center gap-2">
-                    <i class="ri-bank-card-line text-primary"></i>
-                    Recent Accounts
-                </h3>
-                <a routerLink="/accounts" class="text-sm text-primary" style="text-decoration: none;">View All</a>
+        <!-- Recent Accounts Card -->
+        <div class="card animate-slide-in" style="animation-delay: 0.25s;">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="ri-wallet-3-line text-primary"></i>
+                    Comptes Récents
+                </h2>
+                <a routerLink="/accounts" class="btn btn-secondary btn-sm">
+                    Voir tout
+                    <i class="ri-arrow-right-s-line"></i>
+                </a>
             </div>
-            <div>
+
+            <div class="card-body">
+                <!-- Loading State -->
                 <div *ngIf="isLoading">
-                    <div *ngFor="let i of [1,2,3]" class="p-4 border-b">
-                        <div class="skeleton skeleton-text mb-2" style="width: 50%;"></div>
-                        <div class="skeleton skeleton-text" style="width: 30%;"></div>
+                    <div *ngFor="let i of [1,2,3]" class="list-item">
+                        <div class="flex-1">
+                            <div class="skeleton skeleton-text mb-2" style="width: 60%;"></div>
+                            <div class="skeleton skeleton-text" style="width: 40%; height: 0.75rem;"></div>
+                        </div>
+                        <div class="skeleton" style="width: 80px; height: 1.5rem;"></div>
                     </div>
                 </div>
+
+                <!-- Data State -->
                 <div *ngIf="!isLoading && recentAccounts.length > 0">
-                    <div *ngFor="let account of recentAccounts" class="p-4 border-b last:border-b-0 hover:bg-gray-50">
-                        <div class="flex justify-between">
-                            <div>
-                                <div class="font-medium font-mono">{{ account.numeroCompte }}</div>
-                                <div class="text-sm text-gray-500 flex items-center gap-1">
-                                    <i class="ri-wallet-3-line"></i>
-                                    {{ account.typeCompte }}
-                                    <span *ngIf="account.actif" class="badge badge-success ml-2">Active</span>
-                                    <span *ngIf="!account.actif" class="badge badge-danger ml-2">Inactive</span>
-                                </div>
+                    <div *ngFor="let account of recentAccounts" class="list-item">
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 font-mono">{{ account.numeroCompte }}</div>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="badge badge-info text-xs">{{ account.typeCompte }}</span>
+                                <span *ngIf="account.actif" class="badge badge-success text-xs">Actif</span>
+                                <span *ngIf="!account.actif" class="badge badge-danger text-xs">Inactif</span>
                             </div>
-                            <div class="font-bold font-mono text-right">
-                                {{ account.solde | currency:'XOF':'symbol':'1.0-0' }}
-                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-bold text-gray-900">{{ account.solde | number:'1.0-0' }}</div>
+                            <div class="text-xs text-gray-500">FCFA</div>
                         </div>
                     </div>
                 </div>
-                <div *ngIf="!isLoading && recentAccounts.length === 0" class="p-6 text-center text-gray-500">
-                    <div style="font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.5;">
-                        <i class="ri-bank-card-2-line"></i>
+
+                <!-- Empty State -->
+                <div *ngIf="!isLoading && recentAccounts.length === 0" class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="ri-wallet-3-line"></i>
                     </div>
-                    <p class="mb-2">No accounts yet.</p>
-                    <a routerLink="/accounts/new" class="text-primary font-medium">
-                        <i class="ri-add-line"></i> Open first account
+                    <div class="empty-state-title">Aucun compte</div>
+                    <div class="empty-state-text">Créez un compte pour commencer les opérations.</div>
+                    <a routerLink="/accounts/new" class="btn btn-primary">
+                        <i class="ri-add-line"></i> Ouvrir un compte
                     </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .dashboard-container {
+        padding: 1.5rem 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .dashboard-header {
+        margin-bottom: 2rem;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--gray-100);
+        background: var(--gray-50);
+    }
+
+    .card-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--gray-900);
+    }
+
+    .card-title i {
+        font-size: 1.25rem;
+    }
+
+    .card-body {
+        min-height: 250px;
+    }
+
+    .card-body .list-item:first-child {
+        border-top: none;
+    }
+
+    .font-mono {
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+        letter-spacing: -0.02em;
+    }
+</style>

@@ -1,16 +1,16 @@
 <div class="p-6">
-    <div class="mb-6 flex justify-between items-center">
+    <div class="mb-6 flex justify-between items-center animate-slide-in">
         <div>
             <h1 class="text-2xl font-bold mb-2">Account Management</h1>
             <p class="text-gray-500">Overview of all customer accounts and financial holdings.</p>
         </div>
         <a routerLink="/accounts/new" class="btn btn-primary">
-            <i class="ri-add-circle-line" style="margin-right: 0.5rem;"></i> Open Account
+            <i class="ri-add-circle-line mr-2"></i> Open Account
         </a>
     </div>
 
     <!-- Error State -->
-    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger mb-4">
+    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger mb-4 animate-slide-in">
         <i class="ri-error-warning-line"></i> {{ errorMessage }}
         <button (click)="loadAccounts()" class="btn btn-sm btn-secondary ml-2">
             <i class="ri-refresh-line"></i> Retry
@@ -34,23 +34,23 @@
                 <tbody>
                     <tr *ngFor="let i of [1,2,3,4,5]">
                         <td>
-                            <div class="skeleton skeleton-text" style="width: 80%;"></div>
-                            <div class="skeleton skeleton-text" style="width: 50%;"></div>
+                            <div class="skeleton skeleton-text w-3/4 mb-1"></div>
+                            <div class="skeleton skeleton-text w-1/2"></div>
                         </td>
                         <td>
-                            <div class="skeleton skeleton-text"></div>
+                            <div class="skeleton skeleton-text w-2/3"></div>
                         </td>
                         <td>
-                            <div class="skeleton skeleton-text" style="width: 60px;"></div>
+                            <div class="skeleton skeleton-text w-16"></div>
                         </td>
                         <td>
-                            <div class="skeleton skeleton-text"></div>
+                            <div class="skeleton skeleton-text w-24"></div>
                         </td>
                         <td>
-                            <div class="skeleton skeleton-text"></div>
+                            <div class="skeleton skeleton-text h-6 w-20 ml-auto"></div>
                         </td>
                         <td>
-                            <div class="skeleton skeleton-text" style="width: 80px;"></div>
+                            <div class="skeleton skeleton-text w-24"></div>
                         </td>
                     </tr>
                 </tbody>
@@ -59,7 +59,7 @@
     </div>
 
     <!-- Accounts Table -->
-    <div *ngIf="!isLoading && accounts.length > 0" class="card overflow-hidden">
+    <div *ngIf="!isLoading && accounts.length > 0" class="card overflow-hidden animate-slide-in">
         <div class="table-responsive">
             <table>
                 <thead>
@@ -69,24 +69,30 @@
                         <th>Status</th>
                         <th>Created</th>
                         <th class="text-right">Balance</th>
-                        <th>Actions</th>
+                        <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let account of accounts">
+                    <tr *ngFor="let account of accounts" class="hover:bg-gray-50 transition-colors">
                         <td>
-                            <div class="font-medium flex items-center gap-1">
-                                <i class="ri-wallet-3-line text-primary"></i>
-                                {{ getTypeDisplay(account.typeCompte) }}
+                            <div class="font-medium flex items-center gap-2">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-blue-50 text-primary flex items-center justify-center">
+                                    <i class="ri-wallet-3-line"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-gray-900">{{ getTypeDisplay(account.typeCompte) }}</div>
+                                    <div class="text-xs text-gray-500 font-mono tracking-wide">{{ account.numeroCompte
+                                        }}</div>
+                                </div>
                             </div>
-                            <div class="text-sm text-gray-500 font-mono">{{ account.numeroCompte }}</div>
                         </td>
                         <td>
-                            <span *ngIf="account.clientNomComplet" class="flex items-center gap-1">
+                            <span *ngIf="account.clientNomComplet" class="flex items-center gap-2 text-gray-700">
                                 <i class="ri-user-line text-gray-400"></i>
                                 {{ account.clientNomComplet }}
                             </span>
-                            <span *ngIf="!account.clientNomComplet" class="text-gray-400">
+                            <span *ngIf="!account.clientNomComplet" class="text-gray-400 italic">
                                 Client #{{ account.clientId }}
                             </span>
                         </td>
@@ -97,14 +103,19 @@
                             </span>
                         </td>
                         <td class="text-gray-500 text-sm">
-                            {{ account.dateCreation | date:'short' }}
+                            <i class="ri-calendar-line text-gray-400 mr-1"></i>
+                            {{ account.dateCreation | date:'mediumDate' }}
                         </td>
-                        <td class="text-right font-mono font-bold">
-                            {{ account.solde | currency:'XOF':'symbol':'1.0-0' }}
+                        <td class="text-right">
+                            <div class="font-mono font-bold text-base" [class.text-success]="account.solde > 0"
+                                [class.text-danger]="account.solde < 0">
+                                {{ account.solde | currency:'XOF':'symbol':'1.0-0' }}
+                            </div>
                         </td>
-                        <td>
-                            <button (click)="viewTransactions(account.numeroCompte)" class="btn btn-sm btn-secondary">
-                                <i class="ri-exchange-dollar-line"></i> Transactions
+                        <td class="text-center">
+                            <button (click)="viewTransactions(account.numeroCompte)" class="btn btn-sm btn-secondary"
+                                title="View Transactions">
+                                <i class="ri-exchange-dollar-line mr-1"></i> Transactions
                             </button>
                         </td>
                     </tr>
@@ -114,14 +125,14 @@
     </div>
 
     <!-- Empty State -->
-    <div *ngIf="!isLoading && accounts.length === 0 && !errorMessage" class="card p-12 text-center">
-        <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">
+    <div *ngIf="!isLoading && accounts.length === 0 && !errorMessage" class="card p-12 text-center animate-slide-in">
+        <div class="text-6xl text-gray-200 mb-4">
             <i class="ri-bank-card-2-line"></i>
         </div>
         <h3 class="font-bold text-lg mb-2 text-gray-700">No Accounts Yet</h3>
-        <p class="text-gray-500 mb-4">Open your first account to get started.</p>
+        <p class="text-gray-500 mb-6">Open your first account to get started.</p>
         <a routerLink="/accounts/new" class="btn btn-primary">
-            <i class="ri-add-line" style="margin-right: 0.5rem;"></i> Open First Account
+            <i class="ri-add-line mr-2"></i> Open First Account
         </a>
     </div>
 </div>

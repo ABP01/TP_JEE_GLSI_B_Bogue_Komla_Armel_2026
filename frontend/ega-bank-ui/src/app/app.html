@@ -1,8 +1,8 @@
-<div style="display:flex;height:100vh;">
+<div class="flex h-screen bg-gray-50">
   <app-sidebar *ngIf="showLayout()"></app-sidebar>
-  <div style="flex:1;display:flex;flex-direction:column;">
+  <div class="flex-1 flex flex-col overflow-hidden">
     <dashboard-header *ngIf="showLayout()"></dashboard-header>
-    <main style="flex:1;overflow:auto;padding:16px;">
+    <main class="flex-1 overflow-auto p-4 md:p-6">
       <router-outlet></router-outlet>
     </main>
   </div>

@@ -14,10 +14,10 @@ import { AuthService } from '../services/auth.service';
 })
 export class AppSidebar {
   navItems = [
-    { label: 'Dashboard', href: '/', icon: 'ri-dashboard-line' },
-    { label: 'Clients', href: '/clients', icon: 'ri-user-line' },
-    { label: 'Accounts', href: '/accounts', icon: 'ri-bank-card-line' },
-    { label: 'Transactions', href: '/transactions', icon: 'ri-exchange-dollar-line' },
+    { label: 'Tableau de bord', href: '/', icon: 'ri-dashboard-3-line' },
+    { label: 'Clients', href: '/clients', icon: 'ri-user-3-line' },
+    { label: 'Comptes', href: '/accounts', icon: 'ri-wallet-3-line' },
+    { label: 'Transactions', href: '/transactions', icon: 'ri-exchange-funds-line' },
   ];
 
   constructor(private router: Router, private auth: AuthService) { }

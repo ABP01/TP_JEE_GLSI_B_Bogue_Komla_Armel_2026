@@ -1,16 +1,16 @@
 <div class="p-6">
-    <div class="mb-6 flex justify-between items-center">
+    <div class="mb-6 flex justify-between items-center animate-slide-in">
         <div>
             <h1 class="text-2xl font-bold mb-2">Client Management</h1>
             <p class="text-gray-500">View and manage your bank's clients and their associations.</p>
         </div>
         <a routerLink="/clients/new" class="btn btn-primary">
-            <i class="ri-user-add-line" style="margin-right: 0.5rem;"></i> Add Client
+            <i class="ri-user-add-line mr-2"></i> Add Client
         </a>
     </div>
 
     <!-- Error State -->
-    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger mb-4">
+    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger mb-4 animate-slide-in">
         <i class="ri-error-warning-line"></i> {{ errorMessage }}
         <button (click)="loadClients()" class="btn btn-sm btn-secondary ml-2">
             <i class="ri-refresh-line"></i> Retry
@@ -22,50 +22,69 @@
         <div *ngFor="let i of [1,2,3,4,5,6]" class="card p-4 flex flex-col justify-between skeleton-card">
             <div>
                 <div class="flex justify-between items-start mb-2">
-                    <div style="width: 100%;">
-                        <div class="skeleton skeleton-text" style="width: 60%; height: 1.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 30%;"></div>
+                    <div class="w-full">
+                        <div class="skeleton skeleton-text h-6 w-3/5 mb-1"></div>
+                        <div class="skeleton skeleton-text w-1/3"></div>
                     </div>
                 </div>
-                <div class="skeleton skeleton-text"></div>
-                <div class="skeleton skeleton-text" style="width: 80%;"></div>
+                <div class="skeleton skeleton-text mb-1"></div>
+                <div class="skeleton skeleton-text w-4/5"></div>
             </div>
             <div class="flex gap-2 mt-4">
-                <div class="skeleton" style="height: 36px; flex: 1; border-radius: 4px;"></div>
-                <div class="skeleton" style="height: 36px; flex: 1; border-radius: 4px;"></div>
+                <div class="skeleton h-9 flex-1 rounded-md"></div>
+                <div class="skeleton h-9 flex-1 rounded-md"></div>
             </div>
         </div>
     </div>
 
     <!-- Clients Grid -->
     <div *ngIf="!isLoading && clients.length > 0" class="grid-clients">
-        <div *ngFor="let client of clients" class="card p-4 flex flex-col justify-between">
+        <div *ngFor="let client of clients; let i = index"
+            class="card p-4 flex flex-col justify-between animate-slide-in" [style.animation-delay]="i * 50 + 'ms'">
             <div>
-                <div class="flex justify-between items-start mb-2">
-                    <div>
-                        <div class="font-bold text-lg">{{client.prenom}} {{client.nom}}</div>
-                        <div class="text-xs text-gray-500">ID: {{client.id}}</div>
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-10 h-10 rounded-full bg-blue-50 text-base text-primary flex items-center justify-center font-bold">
+                            {{client.prenom.charAt(0)}}{{client.nom.charAt(0)}}
+                        </div>
+                        <div>
+                            <div class="font-bold text-lg text-gray-900 leading-tight">{{client.prenom}} {{client.nom}}
+                            </div>
+                            <div class="text-xs text-gray-500 font-mono">ID: {{client.id}}</div>
+                        </div>
                     </div>
-                    <div class="text-sm text-gray-600 flex items-center gap-1">
-                        <i class="ri-bank-card-line"></i>
+                    <span class="badge" [class.badge-success]="(client.nombreComptes || 0) > 0"
+                        [class.badge-warning]="!client.nombreComptes || client.nombreComptes === 0">
                         {{client.nombreComptes || 0}} accounts
+                    </span>
+                </div>
+
+                <div class="space-y-2 mb-4">
+                    <div class="text-sm text-gray-700 flex items-center gap-2" *ngIf="client.courriel">
+                        <div class="w-6 h-6 rounded-full bg-gray-50 flex items-center justify-center text-gray-400">
+                            <i class="ri-mail-line"></i>
+                        </div>
+                        {{client.courriel}}
                     </div>
-                </div>
-                <div class="text-sm text-gray-700 mb-1 flex items-center gap-1" *ngIf="client.courriel">
-                    <i class="ri-mail-line text-gray-400"></i> {{client.courriel}}
-                </div>
-                <div class="text-sm text-gray-500 flex items-center gap-1" *ngIf="client.telephone">
-                    <i class="ri-phone-line text-gray-400"></i> {{client.telephone}}
+                    <div class="text-sm text-gray-700 flex items-center gap-2" *ngIf="client.telephone">
+                        <div class="w-6 h-6 rounded-full bg-gray-50 flex items-center justify-center text-gray-400">
+                            <i class="ri-phone-line"></i>
+                        </div>
+                        {{client.telephone}}
+                    </div>
                 </div>
             </div>
-            <div class="flex gap-2 mt-4">
-                <button (click)="viewDetails(client.id)" class="btn btn-secondary text-sm flex-1">
-                    <i class="ri-edit-line"></i> Edit
+
+            <div class="flex gap-2 pt-4 border-t border-gray-100">
+                <button (click)="viewDetails(client.id)" class="btn btn-secondary text-sm flex-1 justify-center">
+                    <i class="ri-edit-line mr-1"></i> Edit
                 </button>
-                <button (click)="viewAccounts(client.id)" class="btn btn-primary text-sm flex-1">
-                    <i class="ri-bank-card-line"></i> Accounts
+                <button (click)="viewAccounts(client.id)" class="btn btn-primary text-sm flex-1 justify-center">
+                    <i class="ri-bank-card-line mr-1"></i> Accounts
                 </button>
-                <button (click)="deleteClient(client.id)" class="btn btn-danger text-sm" title="Delete client">
+                <button (click)="deleteClient(client.id)" class="btn btn-danger-soft text-sm px-3"
+                    title="Delete client">
                     <i class="ri-delete-bin-line"></i>
                 </button>
             </div>
@@ -73,14 +92,14 @@
     </div>
 
     <!-- Empty State -->
-    <div *ngIf="!isLoading && clients.length === 0 && !errorMessage" class="card p-12 text-center">
-        <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">
+    <div *ngIf="!isLoading && clients.length === 0 && !errorMessage" class="card p-12 text-center animate-slide-in">
+        <div class="text-6xl text-gray-200 mb-4">
             <i class="ri-user-add-line"></i>
         </div>
         <h3 class="font-bold text-lg mb-2 text-gray-700">No Clients Yet</h3>
-        <p class="text-gray-500 mb-4">Get started by adding your first client.</p>
+        <p class="text-gray-500 mb-6">Get started by adding your first client.</p>
         <a routerLink="/clients/new" class="btn btn-primary">
-            <i class="ri-add-line" style="margin-right: 0.5rem;"></i> Add First Client
+            <i class="ri-add-line mr-2"></i> Add First Client
         </a>
     </div>
 </div>

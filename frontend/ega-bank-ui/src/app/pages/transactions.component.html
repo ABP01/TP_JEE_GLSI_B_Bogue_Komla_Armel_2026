@@ -1,5 +1,5 @@
 <div class="p-6">
-    <div class="mb-6 flex justify-between items-center">
+    <div class="mb-6 flex justify-between items-center animate-slide-in">
         <div>
             <h1 class="text-2xl font-bold mb-2">Transaction History</h1>
             <p class="text-gray-500">
@@ -8,94 +8,93 @@
         </div>
         <div class="flex gap-2">
             <a *ngIf="accountId" routerLink="/transactions" class="btn btn-secondary">
-                <i class="ri-list-check"></i> View All
+                <i class="ri-list-check mr-2"></i> View All
             </a>
             <a [routerLink]="['/transactions/new']" [queryParams]="accountId ? {accountId: accountId} : {}"
                 class="btn btn-primary">
-                <i class="ri-add-line" style="margin-right: 0.5rem;"></i> New Transaction
+                <i class="ri-add-line mr-2"></i> New Transaction
             </a>
         </div>
     </div>
 
     <!-- Loading State (Skeleton) -->
-    <div *ngIf="isLoading">
+    <div *ngIf="isLoading" class="animate-slide-in">
         <!-- Account Summary Skeleton -->
-        <div class="flex gap-4 mb-6">
-            <div *ngFor="let i of [1,2,3]" class="card p-4 min-w-[200px]">
-                <div class="skeleton skeleton-text" style="width: 50%;"></div>
-                <div class="skeleton skeleton-text" style="height: 1.5rem; width: 70%;"></div>
+        <div class="grid-features mb-6">
+            <div *ngFor="let i of [1,2,3,4]" class="card p-4">
+                <div class="skeleton skeleton-text w-1/2 mb-2"></div>
+                <div class="skeleton skeleton-text h-8 w-3/4"></div>
             </div>
         </div>
 
         <!-- Transactions List Skeleton -->
         <div class="card overflow-hidden">
             <div *ngFor="let i of [1,2,3,4,5]" class="p-4 border-b flex justify-between items-center">
-                <div style="width: 60%;">
-                    <div class="skeleton skeleton-text" style="width: 40%;"></div>
-                    <div class="skeleton skeleton-text" style="width: 70%;"></div>
+                <div class="w-3/5">
+                    <div class="skeleton skeleton-text w-2/5 mb-1"></div>
+                    <div class="skeleton skeleton-text w-3/4"></div>
                 </div>
-                <div style="width: 15%;">
-                    <div class="skeleton skeleton-text" style="height: 1.5rem;"></div>
-                    <div class="skeleton skeleton-text"></div>
+                <div class="w-1/6">
+                    <div class="skeleton skeleton-text h-6 mb-1"></div>
+                    <div class="skeleton skeleton-text w-1/2 ml-auto"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Error State -->
-    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger mb-4">
+    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger mb-4 animate-slide-in">
         <i class="ri-error-warning-line"></i> {{ errorMessage }}
         <a *ngIf="!accountId" routerLink="/accounts" class="btn btn-sm btn-secondary ml-2">
-            <i class="ri-bank-card-line"></i> Select Account
+            <i class="ri-bank-card-line mr-1"></i> Select Account
         </a>
     </div>
 
     <!-- Account Summary -->
-    <div *ngIf="selectedAccount && !isLoading" class="grid gap-4 mb-6"
-        style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+    <div *ngIf="selectedAccount && !isLoading" class="grid-features mb-6 animate-slide-in">
         <div class="card p-4">
-            <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1">
+            <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1 font-bold">
                 <i class="ri-money-dollar-circle-line"></i> Current Balance
             </div>
-            <div class="font-bold text-xl" [class.text-success]="selectedAccount.solde > 0"
+            <div class="font-bold text-2xl tracking-tight" [class.text-success]="selectedAccount.solde > 0"
                 [class.text-danger]="selectedAccount.solde <= 0">
                 {{ selectedAccount.solde | currency:'XOF':'symbol':'1.0-0' }}
             </div>
         </div>
         <div class="card p-4">
-            <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1">
+            <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1 font-bold">
                 <i class="ri-wallet-3-line"></i> Account Type
             </div>
-            <div class="font-bold text-xl">{{ getAccountTypeDisplay(selectedAccount.typeCompte) }}</div>
+            <div class="font-bold text-xl text-gray-800">{{ getAccountTypeDisplay(selectedAccount.typeCompte) }}</div>
         </div>
         <div class="card p-4">
-            <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1">
+            <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1 font-bold">
                 <i class="ri-bank-card-line"></i> Account Number
             </div>
-            <div class="font-bold text-lg font-mono">{{ selectedAccount.numeroCompte }}</div>
+            <div class="font-bold text-lg font-mono text-gray-800">{{ selectedAccount.numeroCompte }}</div>
         </div>
         <div class="card p-4">
-            <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1">
+            <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1 font-bold">
                 <i class="ri-exchange-dollar-line"></i> Transactions
             </div>
-            <div class="font-bold text-xl">{{ transactions.length }}</div>
+            <div class="font-bold text-xl text-gray-800">{{ transactions.length }}</div>
         </div>
     </div>
 
     <!-- Transactions List -->
-    <div *ngIf="!isLoading && transactions.length > 0" class="card overflow-hidden">
+    <div *ngIf="!isLoading && transactions.length > 0" class="card overflow-hidden animate-slide-in">
         <div class="p-4 border-b bg-gray-50 flex justify-between items-center">
-            <h3 class="font-bold flex items-center gap-2">
-                <i class="ri-history-line text-primary"></i> 
+            <h3 class="font-bold flex items-center gap-2 text-gray-800">
+                <i class="ri-history-line text-primary"></i>
                 {{ accountId ? 'Account Transactions' : 'All Transactions' }}
             </h3>
-            <span class="text-sm text-gray-500">{{ transactions.length }} transaction(s)</span>
+            <span class="badge badge-neutral">{{ transactions.length }}</span>
         </div>
         <div *ngFor="let txn of transactions"
-            class="transaction-item p-4 border-b flex justify-between items-center last:border-b-0 hover:bg-gray-50 transition-colors">
-            <div class="flex items-center gap-3">
+            class="transaction-item p-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors flex justify-between items-center group">
+            <div class="flex items-center gap-4">
                 <!-- Transaction Icon -->
-                <div class="w-10 h-10 rounded-full flex items-center justify-center"
+                <div class="w-10 h-10 rounded-full flex items-center justify-center transition-transform group-hover:scale-110"
                     [class.bg-green-100]="txn.type === 'DEPOT' || txn.type === 'VIREMENT_ENTRANT'"
                     [class.text-success]="txn.type === 'DEPOT' || txn.type === 'VIREMENT_ENTRANT'"
                     [class.bg-red-100]="txn.type === 'RETRAIT' || txn.type === 'VIREMENT_SORTANT'"
@@ -103,18 +102,23 @@
                     <i [class]="getTypeIcon(txn.type)"></i>
                 </div>
                 <div>
-                    <div class="font-medium flex items-center gap-2">
+                    <div class="font-medium flex items-center gap-2 text-gray-900">
                         {{ getTypeDisplay(txn.type) }}
                         <!-- Afficher le numéro de compte si on affiche toutes les transactions -->
-                        <span *ngIf="!accountId && txn.numeroCompte" class="text-xs font-mono bg-gray-100 px-2 py-0.5 rounded">
+                        <span *ngIf="!accountId && txn.numeroCompte"
+                            class="text-xs font-mono bg-gray-100 px-2 py-0.5 rounded text-gray-600">
                             {{ txn.numeroCompte }}
                         </span>
                     </div>
-                    <div class="text-sm text-gray-500">
-                        <span *ngIf="txn.description" class="mr-2">{{ txn.description }}</span>
-                        <span class="text-xs">{{ txn.dateTransaction | date:'medium' }}</span>
-                        <span *ngIf="txn.compteDestination" class="ml-2">
-                            <i class="ri-arrow-right-line"></i> {{ txn.compteDestination }}
+                    <div class="text-sm text-gray-500 flex items-center gap-3 mt-0.5">
+                        <span *ngIf="txn.description" class="font-medium text-gray-600">{{ txn.description }}</span>
+                        <span class="flex items-center gap-1 text-xs">
+                            <i class="ri-time-line"></i> {{ txn.dateTransaction | date:'medium' }}
+                        </span>
+                        <span *ngIf="txn.compteDestination"
+                            class="flex items-center gap-1 bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">
+                            <i class="ri-arrow-right-line text-gray-400"></i> <span class="font-mono">{{
+                                txn.compteDestination }}</span>
                         </span>
                     </div>
                 </div>
@@ -123,34 +127,36 @@
                 <div class="font-mono font-bold text-lg" [ngClass]="getTxnAmountClass(txn.type)">
                     {{ getTxnSign(txn.type) }}{{ txn.montant | currency:'XOF':'symbol':'1.0-0' }}
                 </div>
-                <div *ngIf="txn.soldeApres !== undefined" class="text-xs text-gray-500 mt-1">
-                    Balance: {{ txn.soldeApres | currency:'XOF':'symbol':'1.0-0' }}
+                <div *ngIf="txn.soldeApres !== undefined" class="text-xs text-gray-400 mt-1 font-mono">
+                    Bal: {{ txn.soldeApres | currency:'XOF':'symbol':'1.0-0' }}
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Empty State - With Account -->
-    <div *ngIf="!isLoading && transactions.length === 0 && !errorMessage && accountId" class="card p-12 text-center">
-        <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">
+    <div *ngIf="!isLoading && transactions.length === 0 && !errorMessage && accountId"
+        class="card p-12 text-center animate-slide-in">
+        <div class="text-6xl text-gray-200 mb-4 scale-in-center">
             <i class="ri-exchange-dollar-line"></i>
         </div>
         <h3 class="font-bold text-lg mb-2 text-gray-700">No Transactions Yet</h3>
-        <p class="text-gray-500 mb-4">This account has no transaction history.</p>
+        <p class="text-gray-500 mb-6">This account has no transaction history.</p>
         <a [routerLink]="['/transactions/new']" [queryParams]="{accountId: accountId}" class="btn btn-primary">
-            <i class="ri-add-line" style="margin-right: 0.5rem;"></i> Make First Transaction
+            <i class="ri-add-line mr-2"></i> Make First Transaction
         </a>
     </div>
 
     <!-- Empty State - All Transactions -->
-    <div *ngIf="!isLoading && transactions.length === 0 && !errorMessage && !accountId" class="card p-12 text-center">
-        <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">
+    <div *ngIf="!isLoading && transactions.length === 0 && !errorMessage && !accountId"
+        class="card p-12 text-center animate-slide-in">
+        <div class="text-6xl text-gray-200 mb-4 scale-in-center">
             <i class="ri-exchange-dollar-line"></i>
         </div>
         <h3 class="font-bold text-lg mb-2 text-gray-700">No Transactions Yet</h3>
-        <p class="text-gray-500 mb-4">No transactions have been made in the system yet.</p>
+        <p class="text-gray-500 mb-6">No transactions have been made in the system yet.</p>
         <a routerLink="/transactions/new" class="btn btn-primary">
-            <i class="ri-add-line" style="margin-right: 0.5rem;"></i> Make First Transaction
+            <i class="ri-add-line mr-2"></i> Make First Transaction
         </a>
     </div>
 </div>

@@ -1,29 +1,36 @@
-<div class="sidebar">
-    <!-- Logo (Click goes to Dashboard /) -->
-    <!-- Logo (Click goes to Dashboard /) -->
-    <div class="logo-area" style="cursor: pointer; justify-content: center;" routerLink="/">
-        <img src="/assets/logoega.png" alt="EGA Bank" width="100" height="40" style="height: 40px; width: auto;">
+<aside class="sidebar">
+    <!-- Logo -->
+    <div class="logo-area" routerLink="/" title="Tableau de bord">
+        <div class="logo-box">
+            <img src="/assets/logoega.png" alt="EGA Bank"
+                style="height: 22px; width: auto; filter: brightness(0) invert(1);">
+        </div>
+        <span>EGA Bank</span>
     </div>
 
     <!-- Navigation -->
     <nav class="nav-area">
-        <a *ngFor="let item of navItems" [routerLink]="item.href" routerLinkActive="bg-gray-100 text-primary"
+        <div class="section-label">Navigation</div>
+
+        <a *ngFor="let item of navItems" [routerLink]="item.href" routerLinkActive="active-nav-item"
             [routerLinkActiveOptions]="{exact: item.href === '/'}" class="nav-item">
-            <i [class]="item.icon" style="font-size: 1.25rem;"></i>
+            <i [class]="item.icon"></i>
             <span>{{ item.label }}</span>
         </a>
     </nav>
 
     <!-- Footer Actions -->
     <div class="footer-area">
-        <a routerLink="/settings" class="nav-item mb-2" style="color: var(--gray-500); cursor: pointer;"
-            routerLinkActive="bg-gray-100 text-primary">
-            <i class="ri-settings-3-line" style="font-size: 1.25rem;"></i>
-            <span>Settings</span>
+        <div class="section-label">Préférences</div>
+
+        <a routerLink="/settings" class="nav-item" routerLinkActive="active-nav-item">
+            <i class="ri-settings-4-line"></i>
+            <span>Paramètres</span>
         </a>
-        <button (click)="logout()" class="nav-item w-full hover-red text-danger border-none bg-transparent">
-            <i class="ri-logout-box-line" style="font-size: 1.25rem;"></i>
-            <span>Logout</span>
+
+        <button (click)="logout()" class="nav-item text-danger">
+            <i class="ri-logout-circle-r-line"></i>
+            <span>Déconnexion</span>
         </button>
     </div>
-</div>
+</aside>
