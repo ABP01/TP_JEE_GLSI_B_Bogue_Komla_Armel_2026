@@ -216,6 +216,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
 
     this.isDownloading = true;
     this.downloadError = '';
+    this.cdr.detectChanges();
 
     this.statementService.downloadStatement(
       this.accountId,
@@ -233,8 +234,9 @@ export class TransactionsComponent implements OnInit, OnDestroy {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
+        // Close modal after triggering download
         this.isDownloading = false;
-        this.closeStatementModal();
+        this.showStatementModal = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
