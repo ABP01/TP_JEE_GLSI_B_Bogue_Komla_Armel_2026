@@ -148,7 +148,8 @@ import { AuthService } from '../services/auth.service';
 
     /* ===== LEFT SIDE - BRANDING ===== */
     .auth-branding {
-      background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+      background: linear-gradient(135deg, rgba(30, 58, 95, 0.85) 0%, rgba(15, 23, 42, 0.9) 15%),
+                  url('/login.jpg') center/cover no-repeat;
       display: flex;
       align-items: center;
       justify-content: center;
